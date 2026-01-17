@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "531604961991",
+    "firebase_url": "https://xavierproject-2babd-default-rtdb.firebaseio.com",
+    "project_id": "xavierproject-2babd",
+    "storage_bucket": "xavierproject-2babd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531604961991:android:f67ca2de4c88373e1e9ce2",
+        "android_client_info": {
+          "package_name": "com.example.xavierproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "531604961991-lh2gj1urms0rnq4v9q0stjik3nk4uea9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.xavierproject",
+            "certificate_hash": "60e0c75d3fc5a93e627e5a2d65f0905d94c239a0"
+          }
+        },
+        {
+          "client_id": "531604961991-6v8tpgtijepbiefo9a01g5v63qch1lig.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhJuYZ7SrhZIpvCaczXouNA7PlFuLel54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "531604961991-6v8tpgtijepbiefo9a01g5v63qch1lig.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

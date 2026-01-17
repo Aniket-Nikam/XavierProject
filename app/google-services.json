@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "531604961991",
+    "project_id": "xavierproject-2babd",
+    "storage_bucket": "xavierproject-2babd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:531604961991:android:f67ca2de4c88373e1e9ce2",
+        "android_client_info": {
+          "package_name": "com.example.xavierproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhJuYZ7SrhZIpvCaczXouNA7PlFuLel54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
