@@ -24,9 +24,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
     private Button loginButton;
-    private TextView forgotPasswordTextView;
+    private TextView forgotPasswordTextView, titleTextView;
     private ProgressBar progressBar;
     private View rootView;
+    private String loginType;
 
     private FirebaseAuth mAuth;
 
@@ -35,7 +36,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Get login type from intent
+        loginType = getIntent().getStringExtra("LOGIN_TYPE");
+        if (loginType == null) {
+            loginType = "user";
+        }
+
         initializeViews();
+        updateUIForLoginType();
         setupFirebase();
         setupClickListeners();
     }
@@ -46,7 +54,22 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView);
+        titleTextView = findViewById(R.id.loginTitleTextView);
         progressBar = findViewById(R.id.progressBar);
+    }
+
+    private void updateUIForLoginType() {
+        switch (loginType) {
+            case "admin":
+                titleTextView.setText("Admin Login");
+                break;
+            case "government":
+                titleTextView.setText("Government Official Login");
+                break;
+            default:
+                titleTextView.setText("User Login");
+                break;
+        }
     }
 
     private void setupFirebase() {

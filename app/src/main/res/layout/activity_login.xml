@@ -34,6 +34,7 @@
                     android:contentDescription="@string/app_name" />
 
                 <TextView
+                    android:id="@+id/loginTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
@@ -42,8 +43,6 @@
                     android:textSize="32sp"
                     android:textStyle="bold"
                     android:fontFamily="sans-serif-medium" />
-
-
 
             </LinearLayout>
 
@@ -144,27 +143,9 @@
                         app:cornerRadius="16dp"
                         app:elevation="4dp" />
 
-                    <!-- Divider -->
-
-
-                    <!-- Google Sign In Button -->
-
-
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Sign Up Link -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-
-
-
-            </LinearLayout>
 
         </LinearLayout>
 

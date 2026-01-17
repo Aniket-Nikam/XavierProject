@@ -82,7 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(v -> registerWithEmail());
         googleSignUpButton.setOnClickListener(v -> signUpWithGoogle());
         loginTextView.setOnClickListener(v -> {
-            startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+            startActivity(new Intent(SignUpActivity.this, LoginTypeActivity.class));
             finish();
         });
     }
@@ -116,7 +116,7 @@ public class SignUpActivity extends AppCompatActivity {
                                             "This email is already registered. Please login instead.",
                                             Snackbar.LENGTH_LONG)
                                     .setAction("Login", v -> {
-                                        startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                                        startActivity(new Intent(SignUpActivity.this, LoginTypeActivity.class));
                                         finish();
                                     })
                                     .show();
