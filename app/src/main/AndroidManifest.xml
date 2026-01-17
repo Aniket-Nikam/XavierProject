@@ -4,7 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,7 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.XavierProject"
         tools:targetApi="31">
-
+        <activity
+            android:name=".MapsActivity"
+            android:label="Maps"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.XavierProject" />
         <!-- Splash Activity -->
         <activity
             android:name=".SplashActivity"
@@ -26,7 +31,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDUU5UwGe3VJNK-Yv1EpTXLc6xt_d1vbKA" />
         <!-- Login Activity -->
         <activity
             android:name=".LoginActivity"
@@ -43,6 +50,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".ComplaintsActivity"
+            android:label="Complaints"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.XavierProject" />
 
         <!-- Settings Activity -->
         <activity
