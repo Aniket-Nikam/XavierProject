@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
@@ -23,13 +24,19 @@ import java.util.Locale;
 public class ComplaintDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "ComplaintDetail";
-    private TextView titleTextView, categoryTextView, descriptionTextView, locationTextView;
+    private TextView titleTextView, categoryTextView, descriptionTextView, locationTextView, userEmailTextView;
     private ImageView complaintImageView;
     private Button btnPending, btnAcknowledged, btnOngoing, btnResolved, btnViewOnMap;
     private ProgressBar imageProgressBar;
 
     private String reportId;
     private String currentStatus;
+    private String userId;
+    private String userEmail;
+    private String userName;
+    private String complaintTitle;
+    private String complaintDescription;
+    private String locationText;
     private double latitude;
     private double longitude;
     private DatabaseReference reportRef;
@@ -55,6 +62,7 @@ public class ComplaintDetailActivity extends AppCompatActivity {
         categoryTextView = findViewById(R.id.detailCategoryTextView);
         descriptionTextView = findViewById(R.id.detailDescriptionTextView);
         locationTextView = findViewById(R.id.detailLocationTextView);
+        userEmailTextView = findViewById(R.id.detailUserEmailTextView);
         complaintImageView = findViewById(R.id.detailImageView);
         imageProgressBar = findViewById(R.id.imageProgressBar);
 
@@ -68,25 +76,35 @@ public class ComplaintDetailActivity extends AppCompatActivity {
     private void loadComplaintData() {
         // Get data from intent
         reportId = getIntent().getStringExtra("REPORT_ID");
-        String title = getIntent().getStringExtra("TITLE");
+        complaintTitle = getIntent().getStringExtra("TITLE");
         String category = getIntent().getStringExtra("CATEGORY");
-        String description = getIntent().getStringExtra("DESCRIPTION");
+        complaintDescription = getIntent().getStringExtra("DESCRIPTION");
         String imageUrl = getIntent().getStringExtra("IMAGE_URL");
         currentStatus = getIntent().getStringExtra("STATUS");
+        userId = getIntent().getStringExtra("USER_ID"); // Get userId instead of email
+        userName = getIntent().getStringExtra("USER_NAME");
         latitude = getIntent().getDoubleExtra("LATITUDE", 0.0);
         longitude = getIntent().getDoubleExtra("LONGITUDE", 0.0);
 
         // Set data to views
-        titleTextView.setText(title != null ? title : "Untitled");
+        titleTextView.setText(complaintTitle != null ? complaintTitle : "Untitled");
         categoryTextView.setText(category != null ? category : "N/A");
-        descriptionTextView.setText(description != null ? description : "No description available");
+        descriptionTextView.setText(complaintDescription != null ? complaintDescription : "No description available");
+
+        // Fetch user email from Firebase Auth Helper
+        if (userId != null && !userId.isEmpty()) {
+            fetchUserEmail(userId);
+        } else {
+            userEmailTextView.setVisibility(View.GONE);
+        }
 
         // Get location from coordinates
         if (latitude != 0.0 && longitude != 0.0) {
             getAddressFromCoordinates(latitude, longitude);
             btnViewOnMap.setEnabled(true);
         } else {
-            locationTextView.setText("Location not available");
+            locationText = "Location not available";
+            locationTextView.setText(locationText);
             btnViewOnMap.setEnabled(false);
         }
 
@@ -108,6 +126,28 @@ public class ComplaintDetailActivity extends AppCompatActivity {
 
         // Highlight current status
         updateStatusButtons(currentStatus);
+    }
+
+    private void fetchUserEmail(String userId) {
+        userEmailTextView.setVisibility(View.VISIBLE);
+        userEmailTextView.setText("Fetching user email...");
+
+        FirebaseAuthHelper.getUserEmailByUserId(userId, new FirebaseAuthHelper.EmailCallback() {
+            @Override
+            public void onEmailFetched(String email) {
+                userEmail = email;
+                userEmailTextView.setText("User: " + email);
+                Log.d(TAG, "User email fetched: " + email);
+            }
+
+            @Override
+            public void onEmailNotFound() {
+                userEmail = null;
+                userEmailTextView.setText("User email not available");
+                userEmailTextView.setVisibility(View.GONE);
+                Log.w(TAG, "User email not found for userId: " + userId);
+            }
+        });
     }
 
     private void getAddressFromCoordinates(double latitude, double longitude) {
@@ -143,75 +183,140 @@ public class ComplaintDetailActivity extends AppCompatActivity {
                         locationBuilder.append(address.getAdminArea());
                     }
 
-                    String locationText = locationBuilder.toString();
+                    locationText = locationBuilder.toString();
                     if (locationText.isEmpty()) {
                         locationText = latitude + ", " + longitude;
                     }
 
-                    final String finalLocation = locationText;
-
                     // Update UI on main thread
-                    runOnUiThread(() -> locationTextView.setText(finalLocation));
+                    runOnUiThread(() -> locationTextView.setText(locationText));
 
                 } else {
                     // If geocoding fails, show coordinates
-                    runOnUiThread(() -> locationTextView.setText(latitude + ", " + longitude));
+                    locationText = latitude + ", " + longitude;
+                    runOnUiThread(() -> locationTextView.setText(locationText));
                 }
 
             } catch (IOException e) {
                 Log.e(TAG, "Geocoding error: " + e.getMessage());
                 // Show coordinates if geocoding fails
-                runOnUiThread(() -> locationTextView.setText(latitude + ", " + longitude));
+                locationText = latitude + ", " + longitude;
+                runOnUiThread(() -> locationTextView.setText(locationText));
             }
         }).start();
     }
 
     private void setupStatusButtons() {
-        btnPending.setOnClickListener(v -> updateStatus("pending"));
-        btnAcknowledged.setOnClickListener(v -> updateStatus("acknowledged"));
-        btnOngoing.setOnClickListener(v -> updateStatus("ongoing"));
-        btnResolved.setOnClickListener(v -> updateStatus("resolved"));
+        btnPending.setOnClickListener(v -> confirmStatusUpdate("pending"));
+        btnAcknowledged.setOnClickListener(v -> confirmStatusUpdate("acknowledged"));
+        btnOngoing.setOnClickListener(v -> confirmStatusUpdate("ongoing"));
+        btnResolved.setOnClickListener(v -> confirmStatusUpdate("resolved"));
 
         // View on Map button
         btnViewOnMap.setOnClickListener(v -> openLocationInMaps());
     }
 
+    private void confirmStatusUpdate(String newStatus) {
+        if (newStatus.equals(currentStatus)) {
+            Toast.makeText(this, "Status is already " + newStatus, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String message = "Update complaint status to " + newStatus.toUpperCase() + "?";
+        if (userEmail != null && !userEmail.isEmpty()) {
+            message += "\n\nAn email notification will be sent to the user.";
+        } else {
+            message += "\n\nNote: User email not available, no notification will be sent.";
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Update Status")
+                .setMessage(message)
+                .setPositiveButton("Update", (dialog, which) -> updateStatus(newStatus))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+// Replace your existing openLocationInMaps() method with this:
+
     private void openLocationInMaps() {
         if (latitude != 0.0 && longitude != 0.0) {
-            // Create URI for Google Maps
-            Uri gmmIntentUri = Uri.parse("geo:" + latitude + "," + longitude + "?q=" + latitude + "," + longitude);
-            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-            mapIntent.setPackage("com.google.android.apps.maps");
-
-            // Check if Google Maps is installed
-            if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                startActivity(mapIntent);
-            } else {
-                // If Google Maps not installed, open in browser
-                Uri browserUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=" + latitude + "," + longitude);
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, browserUri);
-                startActivity(browserIntent);
-            }
+            // Create intent to open MapViewActivity
+            Intent intent = new Intent(this, MapViewActivity.class);
+            intent.putExtra("latitude", latitude);
+            intent.putExtra("longitude", longitude);
+            startActivity(intent);
         } else {
             Toast.makeText(this, "Location coordinates not available", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void updateStatus(String newStatus) {
+        // Show progress dialog
+        AlertDialog progressDialog = new AlertDialog.Builder(this)
+                .setMessage("Updating status" + (userEmail != null ? " and sending email..." : "..."))
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+
+        String oldStatus = currentStatus;
+
         // Update status in Firebase
         reportRef.child("status").setValue(newStatus)
                 .addOnSuccessListener(aVoid -> {
                     currentStatus = newStatus;
                     updateStatusButtons(newStatus);
-                    Toast.makeText(ComplaintDetailActivity.this,
-                            "Status updated to: " + newStatus,
-                            Toast.LENGTH_SHORT).show();
+
+                    // Send email notification if user email is available
+                    if (userEmail != null && !userEmail.isEmpty()) {
+                        sendEmailNotification(oldStatus, newStatus, progressDialog);
+                    } else {
+                        progressDialog.dismiss();
+                        Toast.makeText(ComplaintDetailActivity.this,
+                                "Status updated to: " + newStatus + "\n(No email sent - user email not available)",
+                                Toast.LENGTH_LONG).show();
+                    }
                 })
                 .addOnFailureListener(e -> {
+                    progressDialog.dismiss();
                     Toast.makeText(ComplaintDetailActivity.this,
                             "Failed to update status: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void sendEmailNotification(String oldStatus, String newStatus, AlertDialog progressDialog) {
+        String userNameToSend = userName != null ? userName : "User";
+        String locationToSend = locationText != null ? locationText : "Location not specified";
+
+        MailgunEmailService.sendStatusUpdateEmail(
+                userEmail,
+                userNameToSend,
+                complaintTitle,
+                complaintDescription,
+                locationToSend,
+                oldStatus,
+                newStatus,
+                new MailgunEmailService.EmailCallback() {
+                    @Override
+                    public void onSuccess(String message) {
+                        progressDialog.dismiss();
+                        Toast.makeText(ComplaintDetailActivity.this,
+                                "Status updated and email sent successfully!",
+                                Toast.LENGTH_LONG).show();
+                        Log.d(TAG, "Email notification sent to: " + userEmail);
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(ComplaintDetailActivity.this,
+                                "Status updated but email failed: " + error,
+                                Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Failed to send email: " + error);
+                    }
+                }
+        );
     }
 
     private void updateStatusButtons(String status) {

@@ -17,6 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -30,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private String loginType;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupFirebase() {
         mAuth = FirebaseAuth.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference("users");
     }
 
     private void setupClickListeners() {
@@ -93,11 +99,13 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    showLoading(false);
                     if (task.isSuccessful()) {
                         Log.d(TAG, "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
+                            // ✅ SAVE EMAIL TO REALTIME DATABASE
+                            saveUserEmailToDatabase(user);
+
                             if (!user.isEmailVerified()) {
                                 Snackbar.make(rootView,
                                                 "Please verify your email for full access",
@@ -108,9 +116,36 @@ public class LoginActivity extends AppCompatActivity {
                             navigateToMainActivity();
                         }
                     } else {
+                        showLoading(false);
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
                         handleLoginError(task.getException());
                     }
+                });
+    }
+
+    /**
+     * ✅ NEW METHOD - Saves user email to Realtime Database
+     */
+    private void saveUserEmailToDatabase(FirebaseUser user) {
+        String userId = user.getUid();
+        String email = user.getEmail();
+        String name = user.getDisplayName() != null ? user.getDisplayName() : "User";
+
+        // Create user data map
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", userId);
+        userData.put("email", email);
+        userData.put("name", name);
+        userData.put("lastLogin", System.currentTimeMillis());
+
+        // Save to database
+        usersRef.child(userId).updateChildren(userData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "User email saved to database: " + email);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to save user email: " + e.getMessage());
+                    // Don't show error to user - this is background operation
                 });
     }
 

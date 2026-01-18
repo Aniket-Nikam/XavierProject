@@ -32,6 +32,7 @@ public class ComplaintsActivity extends AppCompatActivity {
     private String cityName;
 
     private DatabaseReference reportsRef;
+    private DatabaseReference usersRef;
     private ValueEventListener reportsListener;
 
     @Override
@@ -61,19 +62,72 @@ public class ComplaintsActivity extends AppCompatActivity {
 
         complaintsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ComplaintsAdapter(this, complaint -> {
-            // Handle item click - open detail activity
-            Intent intent = new Intent(ComplaintsActivity.this, ComplaintDetailActivity.class);
-            intent.putExtra("REPORT_ID", complaint.getReportId()); // Use the actual Firebase ID
-            intent.putExtra("TITLE", complaint.getTitle());
-            intent.putExtra("CATEGORY", complaint.getCategory());
-            intent.putExtra("DESCRIPTION", complaint.getDescription());
-            intent.putExtra("LATITUDE", complaint.getLatitude());
-            intent.putExtra("LONGITUDE", complaint.getLongitude());
-            intent.putExtra("IMAGE_URL", complaint.getImageUrl());
-            intent.putExtra("STATUS", complaint.getStatus());
-            startActivity(intent);
+            // Handle item click - open detail activity with email fetching
+            fetchUserEmailAndOpenDetail(complaint);
         });
         complaintsRecyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * ✅ NEW METHOD - Fetches user email from users table before opening detail
+     */
+    private void fetchUserEmailAndOpenDetail(Complaint complaint) {
+        String userId = complaint.getUserId();
+
+        if (userId == null || userId.isEmpty()) {
+            // No userId - open detail without email
+            openDetailActivity(complaint, null);
+            return;
+        }
+
+        // Show loading
+        progressBar.setVisibility(View.VISIBLE);
+
+        // Fetch email from users table
+        usersRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                progressBar.setVisibility(View.GONE);
+
+                String userEmail = null;
+                if (snapshot.exists()) {
+                    userEmail = snapshot.child("email").getValue(String.class);
+                    Log.d(TAG, "Fetched email for user: " + userEmail);
+                } else {
+                    Log.w(TAG, "User not found in database: " + userId);
+                }
+
+                openDetailActivity(complaint, userEmail);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
+                Log.e(TAG, "Failed to fetch user email: " + error.getMessage());
+
+                // Open detail anyway, just without email
+                openDetailActivity(complaint, null);
+            }
+        });
+    }
+
+    /**
+     * Opens the detail activity with complaint and email info
+     */
+    private void openDetailActivity(Complaint complaint, String userEmail) {
+        Intent intent = new Intent(ComplaintsActivity.this, ComplaintDetailActivity.class);
+        intent.putExtra("REPORT_ID", complaint.getReportId());
+        intent.putExtra("TITLE", complaint.getTitle());
+        intent.putExtra("CATEGORY", complaint.getCategory());
+        intent.putExtra("DESCRIPTION", complaint.getDescription());
+        intent.putExtra("LATITUDE", complaint.getLatitude());
+        intent.putExtra("LONGITUDE", complaint.getLongitude());
+        intent.putExtra("IMAGE_URL", complaint.getImageUrl());
+        intent.putExtra("STATUS", complaint.getStatus());
+        intent.putExtra("USER_EMAIL", userEmail); // Pass fetched email
+        intent.putExtra("USER_NAME", complaint.getUserName());
+        startActivity(intent);
     }
 
     private void loadComplaintsFromFirebase() {
@@ -93,9 +147,8 @@ public class ComplaintsActivity extends AppCompatActivity {
                 for (DataSnapshot reportSnapshot : dataSnapshot.getChildren()) {
                     try {
 
-                        // Get the report ID (key) - this will be used for updating status
+                        // Get the report ID (key)
                         String actualReportId = reportSnapshot.getKey();
-                        String reportId = reportSnapshot.getKey();
 
                         // Parse Firebase data
                         String category = reportSnapshot.child("category").getValue(String.class);
@@ -113,21 +166,20 @@ public class ComplaintsActivity extends AppCompatActivity {
 
                         // Create Complaint object
                         Complaint complaint = new Complaint();
-                        complaint.setReportId(actualReportId != null ? actualReportId : "N/A"); // Store actual ID for Firebase updates
-                        complaint.setId(userName != null ? userName : "Anonymous"); // Display username instead
+                        complaint.setReportId(actualReportId != null ? actualReportId : "N/A");
+                        complaint.setId(userName != null ? userName : "Anonymous");
                         complaint.setTitle(title != null ? title : "Untitled");
                         complaint.setDescription(description != null ? description : "No description");
                         complaint.setStatus(status != null ? status : "pending");
                         complaint.setCategory(category != null ? category : "Other");
                         complaint.setImageUrl(imageUrl);
-                        complaint.setUserId(userId);
+                        complaint.setUserId(userId); // ✅ Store userId for email lookup
                         complaint.setUserName(userName != null ? userName : "Anonymous");
 
                         if (latitude != null) complaint.setLatitude(latitude);
                         if (longitude != null) complaint.setLongitude(longitude);
                         if (timestamp != null) {
                             complaint.setTimestamp(timestamp);
-                            // Convert timestamp to readable date
                             String dateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                                     .format(new Date(timestamp));
                             complaint.setDate(dateStr);
@@ -135,7 +187,6 @@ public class ComplaintsActivity extends AppCompatActivity {
                             complaint.setDate("N/A");
                         }
 
-                        // Set location based on category or coordinates
                         complaint.setLocation(category != null ? category : "Unknown Location");
 
                         complaints.add(complaint);

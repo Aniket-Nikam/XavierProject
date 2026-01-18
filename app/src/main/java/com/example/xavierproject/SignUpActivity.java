@@ -26,6 +26,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private DatabaseReference usersRef;
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -69,6 +72,7 @@ public class SignUpActivity extends AppCompatActivity {
     private void setupFirebase() {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference("users");
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -138,33 +142,50 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "User profile updated.");
-                        saveUserToFirestore(user, username, email);
-                    } else {
-                        showLoading(false);
-                        Log.w(TAG, "Failed to update profile", task.getException());
-                        // Continue anyway - profile update is not critical
-                        saveUserToFirestore(user, username, email);
                     }
+                    // Continue regardless of profile update success
+                    saveUserData(user, username, email);
                 });
     }
 
-    private void saveUserToFirestore(FirebaseUser user, String username, String email) {
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("username", username);
-        userData.put("email", email);
-        userData.put("userId", user.getUid());
-        userData.put("createdAt", System.currentTimeMillis());
-        userData.put("emailVerified", false);
+    /**
+     * ✅ UPDATED METHOD - Saves to both Firestore AND Realtime Database
+     */
+    private void saveUserData(FirebaseUser user, String username, String email) {
+        String userId = user.getUid();
 
-        db.collection("users").document(user.getUid())
-                .set(userData)
+        // Save to Firestore (existing functionality)
+        Map<String, Object> firestoreData = new HashMap<>();
+        firestoreData.put("username", username);
+        firestoreData.put("email", email);
+        firestoreData.put("userId", userId);
+        firestoreData.put("createdAt", System.currentTimeMillis());
+        firestoreData.put("emailVerified", false);
+
+        db.collection("users").document(userId)
+                .set(firestoreData)
                 .addOnSuccessListener(aVoid -> {
                     Log.d(TAG, "User data saved to Firestore");
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to save user data to Firestore", e);
+                });
+
+        // ✅ NEW - Save to Realtime Database for complaint system
+        Map<String, Object> realtimeData = new HashMap<>();
+        realtimeData.put("userId", userId);
+        realtimeData.put("email", email);
+        realtimeData.put("name", username);
+        realtimeData.put("createdAt", System.currentTimeMillis());
+
+        usersRef.child(userId).setValue(realtimeData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "User email saved to Realtime Database: " + email);
                     sendVerificationEmail(user);
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(TAG, "Failed to save user data", e);
-                    // Continue anyway - Firestore is not critical for signup
+                    Log.e(TAG, "Failed to save to Realtime Database", e);
+                    // Continue anyway - send verification email
                     sendVerificationEmail(user);
                 });
     }
@@ -179,7 +200,6 @@ public class SignUpActivity extends AppCompatActivity {
                                 "Account created! Verification email sent to " + user.getEmail(),
                                 Snackbar.LENGTH_LONG).show();
 
-                        // Navigate to MainActivity directly - don't sign out
                         navigateToMainActivity();
                     } else {
                         Log.w(TAG, "Failed to send verification email", task.getException());
@@ -224,7 +244,7 @@ public class SignUpActivity extends AppCompatActivity {
                         Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            saveGoogleUserToFirestore(user);
+                            saveGoogleUserData(user);
                         }
                     } else {
                         showLoading(false);
@@ -234,37 +254,55 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveGoogleUserToFirestore(FirebaseUser user) {
-        // Check if user already exists
-        db.collection("users").document(user.getUid())
+    /**
+     * ✅ UPDATED METHOD - Saves Google user to both Firestore AND Realtime Database
+     */
+    private void saveGoogleUserData(FirebaseUser user) {
+        String userId = user.getUid();
+        String email = user.getEmail();
+        String name = user.getDisplayName() != null ? user.getDisplayName() : "User";
+
+        // Check if user already exists in Firestore
+        db.collection("users").document(userId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (!documentSnapshot.exists()) {
-                        // New user - save data
-                        Map<String, Object> userData = new HashMap<>();
-                        userData.put("username", user.getDisplayName());
-                        userData.put("email", user.getEmail());
-                        userData.put("userId", user.getUid());
-                        userData.put("createdAt", System.currentTimeMillis());
-                        userData.put("emailVerified", user.isEmailVerified());
+                        // New user - save to Firestore
+                        Map<String, Object> firestoreData = new HashMap<>();
+                        firestoreData.put("username", name);
+                        firestoreData.put("email", email);
+                        firestoreData.put("userId", userId);
+                        firestoreData.put("createdAt", System.currentTimeMillis());
+                        firestoreData.put("emailVerified", user.isEmailVerified());
 
-                        db.collection("users").document(user.getUid())
-                                .set(userData)
+                        db.collection("users").document(userId)
+                                .set(firestoreData)
                                 .addOnSuccessListener(aVoid -> {
-                                    showLoading(false);
-                                    navigateToMainActivity();
+                                    Log.d(TAG, "Google user saved to Firestore");
                                 })
                                 .addOnFailureListener(e -> {
-                                    showLoading(false);
-                                    Log.w(TAG, "Failed to save Google user data", e);
-                                    // Continue anyway
-                                    navigateToMainActivity();
+                                    Log.w(TAG, "Failed to save Google user to Firestore", e);
                                 });
-                    } else {
-                        // Existing user
-                        showLoading(false);
-                        navigateToMainActivity();
                     }
+
+                    // ✅ NEW - Always save/update in Realtime Database
+                    Map<String, Object> realtimeData = new HashMap<>();
+                    realtimeData.put("userId", userId);
+                    realtimeData.put("email", email);
+                    realtimeData.put("name", name);
+                    realtimeData.put("lastLogin", System.currentTimeMillis());
+
+                    usersRef.child(userId).updateChildren(realtimeData)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "Google user email saved to Realtime Database: " + email);
+                                showLoading(false);
+                                navigateToMainActivity();
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to save Google user to Realtime Database", e);
+                                showLoading(false);
+                                navigateToMainActivity();
+                            });
                 })
                 .addOnFailureListener(e -> {
                     showLoading(false);

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,134 +12,70 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Title Section -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Complaint Image -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@color/surface">
+            android:layout_height="250dp"
+            android:layout_marginBottom="16dp">
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/detailImageView"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@color/surface"
+                android:contentDescription="Complaint Image" />
+
+            <ProgressBar
+                android:id="@+id/imageProgressBar"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_gravity="center"
+                android:visibility="gone" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Title"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="4dp" />
+        </FrameLayout>
 
-                <TextView
-                    android:id="@+id/detailTitleTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pothole on Main Road"
-                    android:textColor="@color/text_primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+        <!-- Category Badge -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/detailCategoryTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textColor="@android:color/white"
+            app:chipBackgroundColor="@color/primary"
+            android:layout_marginBottom="8dp" />
 
-            </LinearLayout>
+        <!-- Title -->
+        <TextView
+            android:id="@+id/detailTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Complaint Title"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
-        </com.google.android.material.card.MaterialCardView>
+        <!-- User Email -->
+        <TextView
+            android:id="@+id/detailUserEmailTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User: user@example.com"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:drawableStart="@android:drawable/ic_dialog_email"
+            android:drawablePadding="6dp"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone" />
 
-        <!-- Category Section -->
+        <!-- Description Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@color/surface">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Category"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/detailCategoryTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Road"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Location Section -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@color/surface">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Location"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/detailLocationTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mumbai, Maharashtra"
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="12dp" />
-
-                <Button
-                    android:id="@+id/btnViewOnMap"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="View on Map"
-                    android:textColor="@android:color/white"
-                    android:backgroundTint="@color/primary"
-                    app:cornerRadius="12dp"
-                    app:icon="@android:drawable/ic_dialog_map"
-                    app:iconTint="@android:color/white" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Description Section -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
             app:cardBackgroundColor="@color/surface">
 
             <LinearLayout
@@ -160,59 +97,60 @@
                     android:id="@+id/detailDescriptionTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Large pothole causing traffic issues"
+                    android:text="Description of the complaint"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:lineSpacingExtra="4dp" />
+                    android:textSize="15sp"
+                    android:lineSpacingExtra="2dp" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Image Section -->
+        <!-- Location Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
             app:cardBackgroundColor="@color/surface">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/imageLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Image"
+                    android:text="Location"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="4dp" />
 
-                <ImageView
-                    android:id="@+id/detailImageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_below="@id/imageLabel"
-                    android:layout_marginTop="8dp"
-                    android:scaleType="centerCrop"
-                    android:background="@color/input_background"
-                    android:contentDescription="Complaint Image" />
-
-                <ProgressBar
-                    android:id="@+id/imageProgressBar"
+                <TextView
+                    android:id="@+id/detailLocationTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/imageLabel"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="80dp"
-                    android:visibility="gone" />
+                    android:text="Location details"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:drawableStart="@android:drawable/ic_dialog_map"
+                    android:drawablePadding="8dp"
+                    android:layout_marginBottom="8dp" />
 
-            </RelativeLayout>
+                <Button
+                    android:id="@+id/btnViewOnMap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View on Map"
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="@color/primary"
+                    style="@style/Widget.Material3.Button" />
+
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -220,8 +158,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="3dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
             app:cardBackgroundColor="@color/surface">
 
             <LinearLayout
@@ -234,17 +172,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Update Status"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
 
-                <!-- Status Buttons Grid -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select a status to update and notify the user via email:"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Status Buttons Row 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
                     android:layout_marginBottom="8dp">
 
                     <Button
@@ -252,48 +197,52 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
                         android:text="Pending"
                         android:textColor="@android:color/white"
-                        app:cornerRadius="12dp" />
+                        android:layout_marginEnd="4dp"
+                        app:backgroundTint="@color/button_default"
+                        style="@style/Widget.Material3.Button" />
 
                     <Button
                         android:id="@+id/btnAcknowledged"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
                         android:text="Acknowledged"
                         android:textColor="@android:color/white"
-                        app:cornerRadius="12dp" />
+                        android:layout_marginStart="4dp"
+                        app:backgroundTint="@color/button_default"
+                        style="@style/Widget.Material3.Button" />
 
                 </LinearLayout>
 
+                <!-- Status Buttons Row 2 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/btnOngoing"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
                         android:text="Ongoing"
                         android:textColor="@android:color/white"
-                        app:cornerRadius="12dp" />
+                        android:layout_marginEnd="4dp"
+                        app:backgroundTint="@color/button_default"
+                        style="@style/Widget.Material3.Button" />
 
                     <Button
                         android:id="@+id/btnResolved"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
                         android:text="Resolved"
                         android:textColor="@android:color/white"
-                        app:cornerRadius="12dp" />
+                        android:layout_marginStart="4dp"
+                        app:backgroundTint="@color/button_default"
+                        style="@style/Widget.Material3.Button" />
 
                 </LinearLayout>
 

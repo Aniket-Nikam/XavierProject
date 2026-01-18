@@ -11,6 +11,7 @@ public class Complaint {
     private String imageUrl;
     private String userId;
     private String userName;
+    private String userEmail;
     private double latitude;
     private double longitude;
     private long timestamp;
@@ -70,6 +71,10 @@ public class Complaint {
         return userName;
     }
 
+    public String getUserEmail() {
+        return userEmail;
+    }
+
     public double getLatitude() {
         return latitude;
     }
@@ -125,6 +130,10 @@ public class Complaint {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public void setLatitude(double latitude) {

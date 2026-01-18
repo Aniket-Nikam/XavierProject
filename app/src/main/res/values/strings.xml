@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">XavierProject</string>
+    <string name="app_name">Bol Bharat</string>
 
     <!-- Login & SignUp -->
     <string name="email_hint">Email</string>
