@@ -1,6 +1,8 @@
 package com.example.xavierproject;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,7 +26,7 @@ import java.util.List;
 
 public class CommentsActivity extends AppCompatActivity {
 
-    private TextView postContentTextView, emptyTextView;
+    private TextView postContentTextView, postUserNameTextView, postStatsTextView, emptyTextView;
     private RecyclerView commentsRecyclerView;
     private CommentsAdapter commentsAdapter;
     private EditText commentEditText;
@@ -32,10 +34,14 @@ public class CommentsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private String postId;
+    private Post currentPost;
     private DatabaseReference commentsRef;
     private DatabaseReference postRef;
     private FirebaseAuth mAuth;
     private ValueEventListener commentsListener;
+    private ValueEventListener postListener;
+
+    private String sortOrder = "oldest"; // or "newest"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +64,52 @@ public class CommentsActivity extends AppCompatActivity {
         if (postContent != null) {
             postContentTextView.setText(postContent);
         }
+        loadPostDetails();
         loadComments();
         setupCommentButton();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        try {
+            getMenuInflater().inflate(R.menu.menu_comments, menu);
+        } catch (Exception e) {
+            // Menu file not found - menu features disabled
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_sort_comments) {
+            toggleSortOrder();
+            return true;
+        } else if (id == R.id.action_refresh_comments) {
+            loadComments();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleSortOrder() {
+        if (sortOrder.equals("oldest")) {
+            sortOrder = "newest";
+            Toast.makeText(this, "Sorted by newest first", Toast.LENGTH_SHORT).show();
+        } else {
+            sortOrder = "oldest";
+            Toast.makeText(this, "Sorted by oldest first", Toast.LENGTH_SHORT).show();
+        }
+        loadComments();
+    }
+
     private void initializeViews() {
         postContentTextView = findViewById(R.id.postContentTextView);
+        postUserNameTextView = findViewById(R.id.postUserNameTextView);
+        postStatsTextView = findViewById(R.id.postStatsTextView);
         commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
         commentEditText = findViewById(R.id.commentEditText);
         sendCommentButton = findViewById(R.id.sendCommentButton);
@@ -71,8 +117,32 @@ public class CommentsActivity extends AppCompatActivity {
         emptyTextView = findViewById(R.id.emptyTextView);
 
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        commentsAdapter = new CommentsAdapter(this);
+        commentsAdapter = new CommentsAdapter(this, postId);
         commentsRecyclerView.setAdapter(commentsAdapter);
+    }
+
+    private void loadPostDetails() {
+        postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                currentPost = snapshot.getValue(Post.class);
+                if (currentPost != null) {
+                    postContentTextView.setText(currentPost.getContent());
+                    postUserNameTextView.setText(currentPost.getUserName());
+
+                    String stats = currentPost.getUpvotes() + " upvotes · " +
+                            currentPost.getCommentsCount() + " comments";
+                    postStatsTextView.setText(stats);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(CommentsActivity.this, "Error loading post", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        postRef.addValueEventListener(postListener);
     }
 
     private void setupCommentButton() {
@@ -83,6 +153,17 @@ public class CommentsActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Please write a comment", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // Enable multiline with shift+enter, send with enter
+        commentEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (event != null && event.getKeyCode() == android.view.KeyEvent.KEYCODE_ENTER) {
+                if (!event.isShiftPressed()) {
+                    sendCommentButton.performClick();
+                    return true;
+                }
+            }
+            return false;
         });
     }
 
@@ -101,15 +182,28 @@ public class CommentsActivity extends AppCompatActivity {
 
         Comment comment = new Comment(commentId, postId, user.getUid(), userName, content, timestamp);
 
+        // Disable send button while posting
+        sendCommentButton.setEnabled(false);
+
         commentsRef.child(commentId).setValue(comment)
                 .addOnSuccessListener(aVoid -> {
                     commentEditText.setText("");
-                    // Update comment count
                     updateCommentCount();
+                    updateLastActivity();
+                    sendCommentButton.setEnabled(true);
+
+                    // Show feedback
                     Toast.makeText(this, "Comment added!", Toast.LENGTH_SHORT).show();
+
+                    // Scroll to bottom to show new comment
+                    if (sortOrder.equals("oldest")) {
+                        commentsRecyclerView.smoothScrollToPosition(
+                                commentsAdapter.getItemCount());
+                    }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to add comment", Toast.LENGTH_SHORT).show();
+                    sendCommentButton.setEnabled(true);
                 });
     }
 
@@ -125,6 +219,10 @@ public class CommentsActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
+
+    private void updateLastActivity() {
+        postRef.child("lastActivityTimestamp").setValue(System.currentTimeMillis());
     }
 
     private void loadComments() {
@@ -144,13 +242,20 @@ public class CommentsActivity extends AppCompatActivity {
                     }
                 }
 
-                // Sort by timestamp (oldest first for comments)
-                Collections.sort(comments, (c1, c2) -> Long.compare(c1.getTimestamp(), c2.getTimestamp()));
+                // Sort based on current sort order
+                if (sortOrder.equals("oldest")) {
+                    Collections.sort(comments, (c1, c2) ->
+                            Long.compare(c1.getTimestamp(), c2.getTimestamp()));
+                } else {
+                    Collections.sort(comments, (c1, c2) ->
+                            Long.compare(c2.getTimestamp(), c1.getTimestamp()));
+                }
 
                 progressBar.setVisibility(View.GONE);
 
                 if (comments.isEmpty()) {
                     emptyTextView.setVisibility(View.VISIBLE);
+                    emptyTextView.setText("No comments yet. Be the first to comment!");
                     commentsRecyclerView.setVisibility(View.GONE);
                 } else {
                     emptyTextView.setVisibility(View.GONE);
@@ -174,6 +279,9 @@ public class CommentsActivity extends AppCompatActivity {
         super.onDestroy();
         if (commentsRef != null && commentsListener != null) {
             commentsRef.removeEventListener(commentsListener);
+        }
+        if (postRef != null && postListener != null) {
+            postRef.removeEventListener(postListener);
         }
     }
 

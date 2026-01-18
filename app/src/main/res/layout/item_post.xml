@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="3dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp"
     app:cardBackgroundColor="@color/surface">
 
     <LinearLayout
@@ -14,33 +17,79 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- User Header -->
-        <LinearLayout
+        <!-- Header with User Info and Pin Indicator -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="4dp">
 
+            <!-- Pinned Indicator -->
+            <ImageView
+                android:id="@+id/pinnedIndicator"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_pin"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                app:tint="@color/accent" />
+
+            <!-- User Name -->
             <TextView
                 android:id="@+id/postUserNameTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="User Name"
-                android:textColor="@color/text_primary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/postTimeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2h ago"
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:layout_toEndOf="@id/pinnedIndicator"
+                android:layout_centerVertical="true"
+                android:text="User Name"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-        </LinearLayout>
+            <!-- Time and More Button Container -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/postTimeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2h ago"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <ImageButton
+                    android:id="@+id/moreButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/ic_more"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="More options"
+                    app:tint="@color/text_secondary" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <!-- Category Chip -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/categoryChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="General"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            app:chipMinHeight="24dp"
+            app:chipCornerRadius="12dp"
+            app:chipBackgroundColor="@color/category_general"
+            android:layout_marginBottom="8dp" />
 
         <!-- Post Content -->
         <TextView
@@ -49,9 +98,16 @@
             android:layout_height="wrap_content"
             android:text="This is the post content..."
             android:textColor="@color/text_primary"
-            android:textSize="15sp"
-            android:lineSpacingExtra="2dp"
-            android:layout_marginBottom="16dp" />
+            android:textSize="14sp"
+            android:lineSpacingExtra="3dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginBottom="8dp" />
 
         <!-- Action Buttons -->
         <LinearLayout
@@ -63,8 +119,8 @@
             <!-- Upvote Button -->
             <ImageButton
                 android:id="@+id/upvoteButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_upvote"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Upvote"
@@ -76,14 +132,15 @@
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp"
-                android:layout_marginEnd="20dp" />
+                android:textSize="13sp"
+                android:minWidth="32dp"
+                android:layout_marginEnd="8dp" />
 
             <!-- Comment Button -->
             <ImageButton
                 android:id="@+id/commentButton"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_comment"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Comment"
@@ -95,7 +152,36 @@
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                android:textSize="13sp"
+                android:minWidth="32dp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Spacer -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Share Button -->
+            <ImageButton
+                android:id="@+id/shareButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_share"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Share"
+                android:layout_marginEnd="4dp"
+                app:tint="@color/text_secondary" />
+
+            <!-- Bookmark Button -->
+            <ImageButton
+                android:id="@+id/bookmarkButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_bookmark"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Bookmark"
+                app:tint="@color/text_secondary" />
 
         </LinearLayout>
 

@@ -32,4 +32,13 @@
     <!-- System Colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+
+    <color name="chip_background">#E2E8F0</color>
+
+    <!-- Category Colors -->
+    <color name="category_general">#6B7280</color>
+    <color name="category_question">#3B82F6</color>
+    <color name="category_discussion">#8B5CF6</color>
+    <color name="category_help">#EC4899</color>
+    <color name="category_announcement">#F59E0B</color>
 </resources>

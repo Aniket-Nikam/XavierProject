@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -13,9 +17,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_icon"
+        android:roundIcon="@drawable/ic_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.XavierProject"
         tools:targetApi="31">
@@ -53,11 +57,10 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
-        <!-- Add these permissions to your AndroidManifest.xml -->
+
         <activity android:name=".DiscussionActivity" />
         <activity android:name=".CommentsActivity" />
 
-        <!-- Add this inside the <application> tag -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDUU5UwGe3VJNK-Yv1EpTXLc6xt_d1vbKA" />
