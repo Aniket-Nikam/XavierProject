@@ -104,7 +104,7 @@ public class SettingsFragment extends Fragment {
 
         changePasswordLayout.setOnClickListener(v -> changePassword());
         deleteAccountLayout.setOnClickListener(v -> showDeleteAccountDialog());
-        logoutLayout.setOnClickListener(v -> logout());
+        logoutLayout.setOnClickListener(v -> showLogoutDialog());
     }
 
     private void sendVerificationEmail() {
@@ -196,7 +196,7 @@ public class SettingsFragment extends Fragment {
                                         Toast.makeText(getContext(),
                                                 "Account deleted successfully",
                                                 Toast.LENGTH_SHORT).show();
-                                        navigateToLogin();
+                                        navigateToLoginType();
                                     } else {
                                         Snackbar.make(requireView(),
                                                 "Failed to delete account. Please re-login and try again.",
@@ -212,20 +212,26 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void logout() {
+    private void showLogoutDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
                 .setPositiveButton("Logout", (dialog, which) -> {
+                    // Sign out from Firebase
                     mAuth.signOut();
-                    navigateToLogin();
+
+                    // Clear any saved preferences if needed
+                    // sharedPreferences.edit().clear().apply();
+
+                    // Navigate back to LoginTypeActivity
+                    navigateToLoginType();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    private void navigateToLogin() {
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
+    private void navigateToLoginType() {
+        Intent intent = new Intent(getActivity(), LoginTypeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         requireActivity().finish();

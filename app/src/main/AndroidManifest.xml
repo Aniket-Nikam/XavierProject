@@ -8,8 +8,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -30,6 +32,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Login Type Selection Activity -->
+        <activity
+            android:name=".LoginTypeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.XavierProject" />
 
         <!-- Login Activity -->
         <activity
@@ -54,12 +61,48 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <!-- Add these permissions to your AndroidManifest.xml -->
+        <!-- Admin Main Activity -->
+        <activity
+            android:name=".AdminMainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.XavierProject" />
 
+        <!-- Government Main Activity -->
+        <activity
+            android:name=".GovMainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.XavierProject" />
+        <!-- Admin Login Activity -->
+        <activity
+            android:name=".AdminLoginActivity"
+            android:exported="false" />
+
+        <!-- Government Login Activity -->
+        <activity
+            android:name=".GovLoginActivity"
+            android:exported="false" />
+
+        <!-- Maps Activity -->
+        <activity
+            android:name=".MapsActivity"
+            android:label="Maps"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.XavierProject" />
+
+        <!-- Complaints Activity -->
+        <activity
+            android:name=".ComplaintsActivity"
+            android:label="Complaints"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.XavierProject" />
 
         <!-- Add this inside the <application> tag -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDUU5UwGe3VJNK-Yv1EpTXLc6xt_d1vbKA" />
+
+
+
     </application>
 
 </manifest>
