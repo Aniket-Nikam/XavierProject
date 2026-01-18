@@ -54,7 +54,8 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <!-- Add these permissions to your AndroidManifest.xml -->
-
+        <activity android:name=".DiscussionActivity" />
+        <activity android:name=".CommentsActivity" />
 
         <!-- Add this inside the <application> tag -->
         <meta-data
