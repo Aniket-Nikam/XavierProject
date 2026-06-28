@@ -26,6 +26,11 @@
     <color name="warning">#F59E0B</color>
     <color name="warning_background">#FEF3C7</color>
     <color name="category_general">#E0E0E0</color>
+    <color name="category_question">#2196F3</color>
+    <color name="category_discussion">#9C27B0</color>
+    <color name="category_announcement">#F44336</color>
+    <color name="category_help">#FF9800</color>
+    <color name="chip_background">#E0E0E0</color>
 
     <!-- Component Colors -->
     <color name="switch_track">#CBD5E1</color>

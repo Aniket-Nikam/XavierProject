@@ -112,20 +112,15 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
             }
 
             // Load thumbnail image
-            if (Complaint.getThumbnailUrl() != null && !Complaint.getThumbnailUrl().isEmpty()) {
-                Glide.with(context)
-                        .load(Complaint.getThumbnailUrl())
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_image_placeholder)
-                        .error(R.drawable.ic_error_image)
-                        .into(imageViewThumbnail);
-            } else if (Complaint.getImageUrl() != null && !Complaint.getImageUrl().isEmpty()) {
+            if (Complaint.getImageUrl() != null && !Complaint.getImageUrl().isEmpty()) {
                 Glide.with(context)
                         .load(Complaint.getImageUrl())
                         .centerCrop()
                         .placeholder(R.drawable.ic_image_placeholder)
                         .error(R.drawable.ic_error_image)
                         .into(imageViewThumbnail);
+            } else {
+                imageViewThumbnail.setImageResource(R.drawable.ic_image_placeholder);
             }
 
             // Click listener for viewing full details
