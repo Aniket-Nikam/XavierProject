@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -39,7 +39,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
 
         // Initialize Firebase
-        reportsRef = FirebaseDatabase.getInstance().getReference("reports");
+        reportsRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("reports");
         reportLocations = new ArrayList<>();
 
         // Initialize progress bar

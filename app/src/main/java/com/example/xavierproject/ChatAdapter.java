@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.view.LayoutInflater;
 import android.view.View;

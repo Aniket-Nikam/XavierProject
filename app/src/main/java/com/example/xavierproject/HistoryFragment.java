@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,7 +32,7 @@ public class HistoryFragment extends Fragment {
     private ProgressBar progressBar;
     private TextView textViewEmpty;
     private ReportAdapter reportAdapter;
-    private List<Report> reportList;
+    private List<Complaint> reportList;
 
     private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
@@ -43,7 +43,7 @@ public class HistoryFragment extends Fragment {
 
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("reports");
+        databaseReference = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("reports");
         reportList = new ArrayList<>();
     }
 
@@ -96,9 +96,9 @@ public class HistoryFragment extends Fragment {
 
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Report report = dataSnapshot.getValue(Report.class);
-                        if (report != null) {
-                            reportList.add(report);
+                        Complaint Complaint = dataSnapshot.getValue(Complaint.class);
+                        if (Complaint != null) {
+                            reportList.add(Complaint);
                         }
                     }
 
@@ -109,7 +109,7 @@ public class HistoryFragment extends Fragment {
                     reportAdapter.notifyDataSetChanged();
                     showContent();
                 } else {
-                    showEmpty("No reports found. Submit your first report!");
+                    showEmpty("No reports found. Submit your first Complaint!");
                 }
 
                 showLoading(false);

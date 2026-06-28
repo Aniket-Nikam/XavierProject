@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+// removed firestore imports
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
@@ -79,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupFirebase() {
         mAuth = FirebaseAuth.getInstance();
-        usersRef = FirebaseDatabase.getInstance().getReference("users");
+        usersRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("users");
     }
 
     private void setupClickListeners() {
@@ -103,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            // ✅ SAVE EMAIL TO REALTIME DATABASE
+                            // SAVE EMAIL TO REALTIME DATABASE
                             saveUserEmailToDatabase(user);
 
                             if (!user.isEmailVerified()) {
@@ -113,7 +114,23 @@ public class LoginActivity extends AppCompatActivity {
                                         .setAction("Resend", v -> resendVerificationEmail(user))
                                         .show();
                             }
-                            navigateToMainActivity();
+                            
+                            // Check Role in Realtime Database
+                            usersRef.child(user.getUid()).get()
+                                .addOnCompleteListener(roleTask -> {
+                                    if (roleTask.isSuccessful()) {
+                                        String role = "user"; // default
+                                        if (roleTask.getResult().exists() && roleTask.getResult().child("role").exists()) {
+                                            role = roleTask.getResult().child("role").getValue(String.class);
+                                        }
+                                        
+                                        verifyRoleAndNavigate(role);
+                                    } else {
+                                        showLoading(false);
+                                        mAuth.signOut();
+                                        Snackbar.make(rootView, "Failed to verify account role.", Snackbar.LENGTH_LONG).show();
+                                    }
+                                });
                         }
                     } else {
                         showLoading(false);
@@ -123,8 +140,40 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    private void verifyRoleAndNavigate(String role) {
+        if ("admin".equals(loginType)) {
+            if ("admin".equals(role)) {
+                Intent intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            } else {
+                showLoading(false);
+                mAuth.signOut();
+                Snackbar.make(rootView, "Access Denied: You are not an Admin.", Snackbar.LENGTH_LONG).show();
+            }
+        } else if ("government".equals(loginType)) {
+            if ("government".equals(role)) {
+                Intent intent = new Intent(LoginActivity.this, GovMainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            } else {
+                showLoading(false);
+                mAuth.signOut();
+                Snackbar.make(rootView, "Access Denied: You are not a Government Official.", Snackbar.LENGTH_LONG).show();
+            }
+        } else {
+            // Normal user login
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+    }
+
     /**
-     * ✅ NEW METHOD - Saves user email to Realtime Database
+     * âœ… NEW METHOD - Saves user email to Realtime Database
      */
     private void saveUserEmailToDatabase(FirebaseUser user) {
         String userId = user.getUid();

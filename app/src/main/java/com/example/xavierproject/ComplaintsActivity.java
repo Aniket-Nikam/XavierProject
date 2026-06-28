@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,7 +69,7 @@ public class ComplaintsActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ NEW METHOD - Fetches user email from users table before opening detail
+     * âœ… NEW METHOD - Fetches user email from users table before opening detail
      */
     private void fetchUserEmailAndOpenDetail(Complaint complaint) {
         String userId = complaint.getUserId();
@@ -84,7 +84,7 @@ public class ComplaintsActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         // Fetch email from users table
-        usersRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+        usersRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("users").child(userId);
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -136,7 +136,7 @@ public class ComplaintsActivity extends AppCompatActivity {
         emptyTextView.setVisibility(View.GONE);
 
         // Initialize Firebase Database reference
-        reportsRef = FirebaseDatabase.getInstance().getReference("reports");
+        reportsRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("reports");
 
         // Create listener for real-time updates
         reportsListener = new ValueEventListener() {
@@ -173,7 +173,7 @@ public class ComplaintsActivity extends AppCompatActivity {
                         complaint.setStatus(status != null ? status : "pending");
                         complaint.setCategory(category != null ? category : "Other");
                         complaint.setImageUrl(imageUrl);
-                        complaint.setUserId(userId); // ✅ Store userId for email lookup
+                        complaint.setUserId(userId); // âœ… Store userId for email lookup
                         complaint.setUserName(userName != null ? userName : "Anonymous");
 
                         if (latitude != null) complaint.setLatitude(latitude);

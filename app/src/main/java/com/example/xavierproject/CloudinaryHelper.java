@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.content.Context;
 import android.net.Uri;
@@ -29,8 +29,8 @@ import org.json.JSONObject;
 public class CloudinaryHelper {
 
     private static final String TAG = "CloudinaryHelper";
-    private static final String CLOUD_NAME = "dspdqroh3";
-    private static final String UPLOAD_PRESET = "XavierProject";
+    private static final String CLOUD_NAME = BuildConfig.CLOUD_NAME;
+    private static final String UPLOAD_PRESET = BuildConfig.UPLOAD_PRESET;
     private static final String UPLOAD_URL = "https://api.cloudinary.com/v1_1/" + CLOUD_NAME + "/image/upload";
 
     private static OkHttpClient client;

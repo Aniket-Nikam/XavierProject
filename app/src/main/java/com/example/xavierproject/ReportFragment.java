@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.Manifest;
 import android.app.Activity;
@@ -79,7 +79,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
 
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("reports");
+        databaseReference = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("reports");
 
         // Initialize location client
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
@@ -125,7 +125,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                         getCurrentLocation();
                     } else {
                         Toast.makeText(getContext(),
-                                "Location permission required to submit report",
+                                "Location permission required to submit Complaint",
                                 Toast.LENGTH_LONG).show();
                     }
                 }
@@ -336,7 +336,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     * Submit report with validation
+     * Submit Complaint with validation
      */
     private void submitReport() {
         String title = editTextTitle.getText().toString().trim();
@@ -433,7 +433,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onSuccess(String imageUrl, String publicId) {
                         if (isAdded()) {
-                            updateUploadProgress("Upload complete! Saving report...");
+                            updateUploadProgress("Upload complete! Saving Complaint...");
                             saveReportToFirebase(title, category, description, imageUrl, publicId);
                         }
                     }
@@ -452,7 +452,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
     }
 
     /**
-     * Save report data to Firebase
+     * Save Complaint data to Firebase
      */
     private void saveReportToFirebase(String title, String category, String description,
                                       String imageUrl, String publicId) {
@@ -462,7 +462,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
 
         if (reportId == null) {
             showLoading(false);
-            Toast.makeText(getContext(), "Failed to generate report ID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Failed to generate Complaint ID", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -492,7 +492,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                     if (isAdded()) {
                         showLoading(false);
                         Toast.makeText(getContext(),
-                                "Report submitted successfully!",
+                                "Complaint submitted successfully!",
                                 Toast.LENGTH_SHORT).show();
                         clearForm();
 
@@ -504,7 +504,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
                     if (isAdded()) {
                         showLoading(false);
                         Toast.makeText(getContext(),
-                                "Failed to save report: " + e.getMessage(),
+                                "Failed to save Complaint: " + e.getMessage(),
                                 Toast.LENGTH_LONG).show();
                     }
                 });
@@ -516,7 +516,7 @@ public class ReportFragment extends Fragment implements OnMapReadyCallback {
     private void showSuccessDialog() {
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Success!")
-                .setMessage("Your report has been submitted successfully. Would you like to view your report history?")
+                .setMessage("Your Complaint has been submitted successfully. Would you like to view your Complaint history?")
                 .setPositiveButton("View History", (dialog, which) -> navigateToHistory())
                 .setNegativeButton("Submit Another", (dialog, which) -> dialog.dismiss())
                 .setCancelable(true)

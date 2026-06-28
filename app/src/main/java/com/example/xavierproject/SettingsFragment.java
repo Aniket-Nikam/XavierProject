@@ -19,13 +19,14 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SettingsFragment extends Fragment {
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private DatabaseReference usersRef;
     private SharedPreferences sharedPreferences;
 
     private CircleImageView profileImageView;
@@ -40,7 +41,7 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        usersRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("users");
         sharedPreferences = requireActivity().getSharedPreferences("AppPreferences", 0);
 
         initializeViews(view);
@@ -126,8 +127,8 @@ public class SettingsFragment extends Fragment {
 
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            db.collection("users").document(user.getUid())
-                    .update("notificationsEnabled", enabled)
+            usersRef.child(user.getUid())
+                    .child("notificationsEnabled").setValue(enabled)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(getContext(), "Notification preference updated", Toast.LENGTH_SHORT).show();
                     })
@@ -185,9 +186,9 @@ public class SettingsFragment extends Fragment {
             // Show loading
             Snackbar.make(requireView(), "Deleting account...", Snackbar.LENGTH_SHORT).show();
 
-            // Delete user data from Firestore
-            db.collection("users").document(userId)
-                    .delete()
+            // Delete user data from Realtime Database
+            usersRef.child(userId)
+                    .removeValue()
                     .addOnSuccessListener(aVoid -> {
                         // Delete Firebase Auth account
                         user.delete()

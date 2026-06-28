@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.os.Bundle;
 import android.content.Intent;
@@ -104,7 +104,7 @@ public class ComplaintDetailActivity extends AppCompatActivity {
         }
 
         // Initialize Firebase reference
-        reportRef = FirebaseDatabase.getInstance().getReference("reports").child(reportId);
+        reportRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("reports").child(reportId);
 
         // Highlight current status
         updateStatusButtons(currentStatus);

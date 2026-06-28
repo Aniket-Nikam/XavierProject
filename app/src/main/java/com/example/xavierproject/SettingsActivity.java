@@ -12,13 +12,14 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private DatabaseReference usersRef;
 
     private CircleImageView profileImageView;
     private TextView usernameTextView, emailTextView;
@@ -36,7 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Settings");
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        usersRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("users");
 
         initializeViews();
         loadUserData();
@@ -83,8 +84,8 @@ public class SettingsActivity extends AppCompatActivity {
     private void saveNotificationPreference(boolean enabled) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            db.collection("users").document(user.getUid())
-                    .update("notificationsEnabled", enabled)
+            usersRef.child(user.getUid())
+                    .child("notificationsEnabled").setValue(enabled)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(this,
                                 "Notification preference updated", Toast.LENGTH_SHORT).show();
@@ -126,9 +127,9 @@ public class SettingsActivity extends AppCompatActivity {
         if (user != null) {
             String userId = user.getUid();
 
-            // Delete user data from Firestore
-            db.collection("users").document(userId)
-                    .delete()
+            // Delete user data from Realtime Database
+            usersRef.child(userId)
+                    .removeValue()
                     .addOnSuccessListener(aVoid -> {
                         // Delete Firebase Auth account
                         user.delete()

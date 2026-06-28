@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -60,7 +60,7 @@ public class DiscussionActivity extends AppCompatActivity {
         }
 
         mAuth = FirebaseAuth.getInstance();
-        postsRef = FirebaseDatabase.getInstance().getReference("posts");
+        postsRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("posts");
 
         initializeViews();
         setupFilterChips();

@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 public class Complaint {
     private String id;
@@ -28,6 +28,14 @@ public class Complaint {
         this.status = status;
         this.date = date;
         this.location = location;
+    }
+
+    public Complaint(String category, String description, String imageUrl, double latitude, double longitude) {
+        this.category = category;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     // Getters

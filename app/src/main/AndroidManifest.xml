@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:usesCleartextTraffic="false"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -54,6 +55,21 @@
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.XavierProject" />
+            
+        <activity
+            android:name=".AdminMainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.XavierProject" />
+            
+        <activity
+            android:name=".GovMainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.XavierProject" />
+            
+        <activity
+            android:name=".ManageUsersActivity"
+            android:exported="false"
+            android:theme="@style/Theme.XavierProject" />
 
         <!-- Maps Activity -->
         <activity
@@ -69,10 +85,6 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.XavierProject" />
 
-        <activity
-            android:name=".MapViewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <!-- Settings Activity -->
         <activity
@@ -84,7 +96,7 @@
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDUU5UwGe3VJNK-Yv1EpTXLc6xt_d1vbKA" />
+            android:value="${mapsApiKey}" />
 
 
     </application>

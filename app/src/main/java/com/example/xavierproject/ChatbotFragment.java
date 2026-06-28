@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,8 +42,6 @@ public class ChatbotFragment extends Fragment {
     private ExecutorService executorService;
     private OkHttpClient client;
 
-    // Update this URL to match your chatbot server
-    private static final String CHAT_URL = "http://192.168.0.110:5000/chat";
 
     @Nullable
     @Override
@@ -107,25 +105,47 @@ public class ChatbotFragment extends Fragment {
     private void sendMessageToBot(String userText) {
         executorService.execute(() -> {
             try {
-                JSONObject json = new JSONObject();
-                json.put("message", userText);
+                // Construct Gemini API Request JSON
+                JSONObject payload = new JSONObject();
+                
+                // System instructions to restrict the bot
+                JSONObject systemInstruction = new JSONObject();
+                JSONObject systemParts = new JSONObject();
+                systemParts.put("text", "You are a civic issue reporting app assistant for XavierProject. Only answer questions related to the app, reporting issues, civic matters, or navigating the platform. Do not answer coding problems or unrelated queries.");
+                systemInstruction.put("parts", systemParts);
+                payload.put("system_instruction", systemInstruction);
+
+                // User message
+                JSONObject contents = new JSONObject();
+                JSONObject parts = new JSONObject();
+                parts.put("text", userText);
+                contents.put("parts", new org.json.JSONArray().put(parts));
+                payload.put("contents", new org.json.JSONArray().put(contents));
 
                 RequestBody body = RequestBody.create(
-                        json.toString(),
+                        payload.toString(),
                         MediaType.parse("application/json; charset=utf-8")
                 );
 
+                String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + BuildConfig.GEMINI_API_KEY;
+
                 Request request = new Request.Builder()
-                        .url(CHAT_URL)
+                        .url(geminiUrl)
                         .post(body)
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
-
                     if (response.isSuccessful() && response.body() != null) {
                         String responseData = response.body().string();
                         JSONObject jsonResponse = new JSONObject(responseData);
-                        String botReply = jsonResponse.getString("reply");
+                        
+                        // Parse Gemini response
+                        String botReply = jsonResponse.getJSONArray("candidates")
+                                .getJSONObject(0)
+                                .getJSONObject("content")
+                                .getJSONArray("parts")
+                                .getJSONObject(0)
+                                .getString("text");
 
                         if (getActivity() != null) {
                             getActivity().runOnUiThread(() -> {
@@ -151,7 +171,7 @@ public class ChatbotFragment extends Fragment {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         removeTypingIndicator();
-                        addMessage("Connection Failed ❌\nPlease check your server connection.", Message.TYPE_BOT);
+                        addMessage("Connection Failed âŒ\nPlease check your internet connection.", Message.TYPE_BOT);
                         updateStatus("Offline");
                     });
                 }

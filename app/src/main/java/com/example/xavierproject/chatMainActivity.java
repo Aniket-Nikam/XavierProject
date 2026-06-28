@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -116,7 +116,7 @@ public class chatMainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 runOnUiThread(() -> {
                     removeTypingIndicator();
-                    addMessage("Connection Failed ❌", Message.TYPE_BOT);
+                    addMessage("Connection Failed âŒ", Message.TYPE_BOT);
                 });
             }
         });

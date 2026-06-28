@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,10 +19,10 @@ import java.util.Locale;
 
 public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportViewHolder> {
 
-    private List<Report> reportList;
+    private List<Complaint> reportList;
     private Context context;
 
-    public ReportAdapter(List<Report> reportList, Context context) {
+    public ReportAdapter(List<Complaint> reportList, Context context) {
         this.reportList = reportList;
         this.context = context;
     }
@@ -37,8 +37,8 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
 
     @Override
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
-        Report report = reportList.get(position);
-        holder.bind(report);
+        Complaint Complaint = reportList.get(position);
+        holder.bind(Complaint);
     }
 
     @Override
@@ -64,22 +64,22 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
             textViewLocation = itemView.findViewById(R.id.textViewLocation);
         }
 
-        public void bind(Report report) {
+        public void bind(Complaint Complaint) {
             // Set title
-            textViewTitle.setText(report.getTitle());
+            textViewTitle.setText(Complaint.getTitle());
 
             // Set category
-            textViewCategory.setText(report.getCategory());
+            textViewCategory.setText(Complaint.getCategory());
 
             // Set description
-            textViewDescription.setText(report.getDescription());
+            textViewDescription.setText(Complaint.getDescription());
 
             // Set timestamp
-            String formattedDate = formatTimestamp(report.getTimestamp());
+            String formattedDate = formatTimestamp(Complaint.getTimestamp());
             textViewTimestamp.setText(formattedDate);
 
             // Set status with color
-            String status = report.getStatus() != null ? report.getStatus() : "pending";
+            String status = Complaint.getStatus() != null ? Complaint.getStatus() : "pending";
             textViewStatus.setText(status.substring(0, 1).toUpperCase() + status.substring(1));
 
             int statusColor;
@@ -100,11 +100,11 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
             textViewStatus.setTextColor(statusColor);
 
             // Set location
-            if (report.getLocation() != null) {
+            if (Complaint.getLocation() != null) {
                 String locationText = String.format(Locale.getDefault(),
                         "Lat: %.4f, Lng: %.4f",
-                        report.getLatitude(),
-                        report.getLongitude());
+                        Complaint.getLatitude(),
+                        Complaint.getLongitude());
                 textViewLocation.setText(locationText);
                 textViewLocation.setVisibility(View.VISIBLE);
             } else {
@@ -112,16 +112,16 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
             }
 
             // Load thumbnail image
-            if (report.getThumbnailUrl() != null && !report.getThumbnailUrl().isEmpty()) {
+            if (Complaint.getThumbnailUrl() != null && !Complaint.getThumbnailUrl().isEmpty()) {
                 Glide.with(context)
-                        .load(report.getThumbnailUrl())
+                        .load(Complaint.getThumbnailUrl())
                         .centerCrop()
                         .placeholder(R.drawable.ic_image_placeholder)
                         .error(R.drawable.ic_error_image)
                         .into(imageViewThumbnail);
-            } else if (report.getImageUrl() != null && !report.getImageUrl().isEmpty()) {
+            } else if (Complaint.getImageUrl() != null && !Complaint.getImageUrl().isEmpty()) {
                 Glide.with(context)
-                        .load(report.getImageUrl())
+                        .load(Complaint.getImageUrl())
                         .centerCrop()
                         .placeholder(R.drawable.ic_image_placeholder)
                         .error(R.drawable.ic_error_image)

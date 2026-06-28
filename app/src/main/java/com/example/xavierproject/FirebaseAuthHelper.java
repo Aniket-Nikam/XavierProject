@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,7 +49,7 @@ public class FirebaseAuthHelper {
 
         // For other users, we need to get it from Realtime Database
         // You should store email in the database when user creates a report
-        DatabaseReference usersRef = FirebaseDatabase.getInstance()
+        DatabaseReference usersRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("users")
                 .child(userId);
 
@@ -90,7 +90,7 @@ public class FirebaseAuthHelper {
             String displayName = currentUser.getDisplayName();
 
             if (email != null) {
-                DatabaseReference userRef = FirebaseDatabase.getInstance()
+                DatabaseReference userRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app")
                         .getReference("users")
                         .child(userId);
 

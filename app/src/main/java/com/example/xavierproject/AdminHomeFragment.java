@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +21,7 @@ public class AdminHomeFragment extends Fragment {
     private CircleImageView profileImageView;
     private View mapsContainer;
     private View complaintBtn;
+    private View manageUsersBtn;
 
     @Nullable
     @Override
@@ -42,11 +43,18 @@ public class AdminHomeFragment extends Fragment {
         profileImageView = view.findViewById(R.id.profileImageView);
         mapsContainer = view.findViewById(R.id.maps_container);
         complaintBtn = view.findViewById(R.id.complaint_btn);
+        manageUsersBtn = view.findViewById(R.id.manage_users_btn);
     }
 
     private void setupClickListeners() {
         mapsContainer.setOnClickListener(v -> showCitySelector("maps"));
         complaintBtn.setOnClickListener(v -> showCitySelector("complaints"));
+        if (manageUsersBtn != null) {
+            manageUsersBtn.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), ManageUsersActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void showCitySelector(String actionType) {

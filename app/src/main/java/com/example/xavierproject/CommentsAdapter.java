@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -35,7 +35,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         this.comments = new ArrayList<>();
         this.currentUser = FirebaseAuth.getInstance().getCurrentUser();
         this.postId = postId;
-        this.commentsRef = FirebaseDatabase.getInstance().getReference("comments").child(postId);
+        this.commentsRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("comments").child(postId);
     }
 
     public void setComments(List<Comment> comments) {
@@ -211,7 +211,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     }
 
     private void updateCommentCount() {
-        DatabaseReference postRef = FirebaseDatabase.getInstance()
+        DatabaseReference postRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("posts").child(postId);
         postRef.child("commentsCount").setValue(comments.size());
         postRef.child("lastActivityTimestamp").setValue(System.currentTimeMillis());

@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -57,8 +57,8 @@ public class CommentsActivity extends AppCompatActivity {
         postId = getIntent().getStringExtra("POST_ID");
         String postContent = getIntent().getStringExtra("POST_CONTENT");
 
-        commentsRef = FirebaseDatabase.getInstance().getReference("comments").child(postId);
-        postRef = FirebaseDatabase.getInstance().getReference("posts").child(postId);
+        commentsRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("comments").child(postId);
+        postRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("posts").child(postId);
 
         initializeViews();
         if (postContent != null) {
@@ -130,7 +130,7 @@ public class CommentsActivity extends AppCompatActivity {
                     postContentTextView.setText(currentPost.getContent());
                     postUserNameTextView.setText(currentPost.getUserName());
 
-                    String stats = currentPost.getUpvotes() + " upvotes · " +
+                    String stats = currentPost.getUpvotes() + " upvotes Â· " +
                             currentPost.getCommentsCount() + " comments";
                     postStatsTextView.setText(stats);
                 }

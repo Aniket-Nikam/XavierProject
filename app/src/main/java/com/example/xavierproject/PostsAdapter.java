@@ -1,4 +1,4 @@
-package com.example.xavierproject;
+﻿package com.example.xavierproject;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -34,7 +34,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         this.context = context;
         this.posts = new ArrayList<>();
         this.currentUser = currentUser;
-        this.postsRef = FirebaseDatabase.getInstance().getReference("posts");
+        this.postsRef = FirebaseDatabase.getInstance("https://bolbharat-b4a8b-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("posts");
     }
 
     public void setPosts(List<Post> posts) {
@@ -200,7 +200,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         if (currentUser != null && post.getUserId().equals(currentUser.getUid())) {
             options = new String[]{"Delete Post", "Cancel"};
         } else {
-            options = new String[]{"Report Post", "Cancel"};
+            options = new String[]{"Complaint Post", "Cancel"};
         }
 
         new AlertDialog.Builder(context)
@@ -208,7 +208,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 .setItems(options, (dialog, which) -> {
                     if (options[which].equals("Delete Post")) {
                         deletePost(post, position);
-                    } else if (options[which].equals("Report Post")) {
+                    } else if (options[which].equals("Complaint Post")) {
                         Toast.makeText(context, "Post reported", Toast.LENGTH_SHORT).show();
                     }
                 })
