@@ -17,6 +17,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,16 +28,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
     private Button loginButton;
-    private TextView forgotPasswordTextView;
+    private TextView forgotPasswordTextView, titleTextView;
     private ProgressBar progressBar;
     private View rootView;
     private String loginType;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
 
         // Get login type from intent
         loginType = getIntent().getStringExtra("LOGIN_TYPE");
@@ -41,26 +47,10 @@ public class LoginActivity extends AppCompatActivity {
             loginType = "user";
         }
 
-        // Set the appropriate layout based on login type
-        setLayout();
-
         initializeViews();
+        updateUIForLoginType();
         setupFirebase();
         setupClickListeners();
-    }
-
-    private void setLayout() {
-        switch (loginType) {
-            case "admin":
-                setContentView(R.layout.activity_admin_login);
-                break;
-            case "government":
-                setContentView(R.layout.activity_gov_login);
-                break;
-            default:
-                setContentView(R.layout.activity_login);
-                break;
-        }
     }
 
     private void initializeViews() {
@@ -69,11 +59,27 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView);
+        titleTextView = findViewById(R.id.loginTitleTextView);
         progressBar = findViewById(R.id.progressBar);
+    }
+
+    private void updateUIForLoginType() {
+        switch (loginType) {
+            case "admin":
+                titleTextView.setText("Admin Login");
+                break;
+            case "government":
+                titleTextView.setText("Government Official Login");
+                break;
+            default:
+                titleTextView.setText("User Login");
+                break;
+        }
     }
 
     private void setupFirebase() {
         mAuth = FirebaseAuth.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference("users");
     }
 
     private void setupClickListeners() {
@@ -93,11 +99,13 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    showLoading(false);
                     if (task.isSuccessful()) {
                         Log.d(TAG, "signInWithEmail:success");
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
+                            // ✅ SAVE EMAIL TO REALTIME DATABASE
+                            saveUserEmailToDatabase(user);
+
                             if (!user.isEmailVerified()) {
                                 Snackbar.make(rootView,
                                                 "Please verify your email for full access",
@@ -108,9 +116,36 @@ public class LoginActivity extends AppCompatActivity {
                             navigateToMainActivity();
                         }
                     } else {
+                        showLoading(false);
                         Log.w(TAG, "signInWithEmail:failure", task.getException());
                         handleLoginError(task.getException());
                     }
+                });
+    }
+
+    /**
+     * ✅ NEW METHOD - Saves user email to Realtime Database
+     */
+    private void saveUserEmailToDatabase(FirebaseUser user) {
+        String userId = user.getUid();
+        String email = user.getEmail();
+        String name = user.getDisplayName() != null ? user.getDisplayName() : "User";
+
+        // Create user data map
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", userId);
+        userData.put("email", email);
+        userData.put("name", name);
+        userData.put("lastLogin", System.currentTimeMillis());
+
+        // Save to database
+        usersRef.child(userId).updateChildren(userData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "User email saved to database: " + email);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to save user email: " + e.getMessage());
+                    // Don't show error to user - this is background operation
                 });
     }
 
@@ -201,21 +236,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToMainActivity() {
-        Intent intent;
-
-        // Navigate to different MainActivity based on login type
-        switch (loginType) {
-            case "admin":
-                intent = new Intent(LoginActivity.this, AdminMainActivity.class);
-                break;
-            case "government":
-                intent = new Intent(LoginActivity.this, GovMainActivity.class);
-                break;
-            default:
-                intent = new Intent(LoginActivity.this, MainActivity.class);
-                break;
-        }
-
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

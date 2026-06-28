@@ -15,10 +15,16 @@ public class ComplaintsAdapter extends RecyclerView.Adapter<ComplaintsAdapter.Co
 
     private Context context;
     private List<Complaint> complaints;
+    private OnComplaintClickListener clickListener;
 
-    public ComplaintsAdapter(Context context) {
+    public interface OnComplaintClickListener {
+        void onComplaintClick(Complaint complaint);
+    }
+
+    public ComplaintsAdapter(Context context, OnComplaintClickListener listener) {
         this.context = context;
         this.complaints = new ArrayList<>();
+        this.clickListener = listener;
     }
 
     public void setComplaints(List<Complaint> complaints) {
@@ -37,7 +43,7 @@ public class ComplaintsAdapter extends RecyclerView.Adapter<ComplaintsAdapter.Co
     public void onBindViewHolder(@NonNull ComplaintViewHolder holder, int position) {
         Complaint complaint = complaints.get(position);
 
-        holder.idTextView.setText(complaint.getId());
+        holder.idTextView.setText(complaint.getId()); // This will show username
         holder.titleTextView.setText(complaint.getTitle());
         holder.descriptionTextView.setText(complaint.getDescription());
         holder.statusTextView.setText(complaint.getStatus());
@@ -46,18 +52,30 @@ public class ComplaintsAdapter extends RecyclerView.Adapter<ComplaintsAdapter.Co
 
         // Set status color
         int statusColor;
-        switch (complaint.getStatus()) {
-            case "Resolved":
+        String status = complaint.getStatus() != null ? complaint.getStatus().toLowerCase() : "pending";
+        switch (status) {
+            case "resolved":
                 statusColor = context.getColor(R.color.status_resolved);
                 break;
-            case "In Progress":
+            case "ongoing":
+            case "in progress":
                 statusColor = context.getColor(R.color.status_in_progress);
                 break;
-            default: // Pending
+            case "acknowledged":
+                statusColor = context.getColor(R.color.accent);
+                break;
+            default: // pending
                 statusColor = context.getColor(R.color.status_pending);
                 break;
         }
         holder.statusTextView.setTextColor(statusColor);
+
+        // Set click listener
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onComplaintClick(complaint);
+            }
+        });
     }
 
     @Override

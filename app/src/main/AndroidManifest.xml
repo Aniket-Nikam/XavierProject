@@ -2,20 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,7 +18,7 @@
         android:theme="@style/Theme.XavierProject"
         tools:targetApi="31">
 
-        <!-- Splash Activity -->
+        <!-- Splash Activity (App Entry Point) -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -36,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <!-- Login Type Selection Activity -->
         <activity
             android:name=".LoginTypeActivity"
@@ -46,49 +39,21 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.XavierProject" />
 
         <!-- SignUp Activity -->
         <activity
             android:name=".SignUpActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.XavierProject" />
 
         <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-
-        <!-- Settings Activity -->
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
-
-        <activity android:name=".DiscussionActivity" />
-        <activity android:name=".CommentsActivity" />
-
-        <!-- Add these permissions to your AndroidManifest.xml -->
-        <!-- Admin Main Activity -->
-        <activity
-            android:name=".AdminMainActivity"
             android:exported="false"
             android:theme="@style/Theme.XavierProject" />
-
-        <!-- Government Main Activity -->
-        <activity
-            android:name=".GovMainActivity"
-            android:exported="false"
-            android:theme="@style/Theme.XavierProject" />
-        <!-- Admin Login Activity -->
-        <activity
-            android:name=".AdminLoginActivity"
-            android:exported="false" />
-
-        <!-- Government Login Activity -->
-        <activity
-            android:name=".GovLoginActivity"
-            android:exported="false" />
 
         <!-- Maps Activity -->
         <activity
@@ -104,10 +69,22 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.XavierProject" />
 
+        <activity
+            android:name=".MapViewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.XavierProject" />
+        <activity android:name=".ComplaintDetailActivity" />
+        <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDUU5UwGe3VJNK-Yv1EpTXLc6xt_d1vbKA" />
-
 
 
     </application>

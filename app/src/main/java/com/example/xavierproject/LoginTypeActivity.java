@@ -2,6 +2,7 @@ package com.example.xavierproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.card.MaterialCardView;
 
@@ -25,22 +26,14 @@ public class LoginTypeActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        // User Login
-        userLoginCard.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginTypeActivity.this, LoginActivity.class);
-            startActivity(intent);
-        });
+        userLoginCard.setOnClickListener(v -> openLogin("user"));
+        adminLoginCard.setOnClickListener(v -> openLogin("admin"));
+        govLoginCard.setOnClickListener(v -> openLogin("government"));
+    }
 
-        // Admin Login
-        adminLoginCard.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginTypeActivity.this, AdminLoginActivity.class);
-            startActivity(intent);
-        });
-
-        // Government Login
-        govLoginCard.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginTypeActivity.this, GovLoginActivity.class);
-            startActivity(intent);
-        });
+    private void openLogin(String loginType) {
+        Intent intent = new Intent(LoginTypeActivity.this, LoginActivity.class);
+        intent.putExtra("LOGIN_TYPE", loginType);
+        startActivity(intent);
     }
 }

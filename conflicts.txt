@@ -1,0 +1,2098 @@
+﻿diff --cc app/build.gradle
+index fbb6a3d,3ad903c..0000000
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@@ -20,64 -20,83 +20,134 @@@ android 
+      buildTypes {
+          release {
+              minifyEnabled false
+-             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
++             proguardFiles getDefaultProguardFile(
++                     'proguard-android-optimize.txt'
++             ), 'proguard-rules.pro'
+          }
+      }
++     packagingOptions {
++         resources {
++             excludes += ['META-INF/DEPENDENCIES']
++             excludes += ['META-INF/LICENSE']
++             excludes += ['META-INF/LICENSE.txt']
++             excludes += ['META-INF/license.txt']
++             excludes += ['META-INF/NOTICE']
++             excludes += ['META-INF/NOTICE.txt']
++             excludes += ['META-INF/notice.txt']
++             excludes += ['META-INF/ASL2.0']
++             excludes += ['META-INF/*.kotlin_module']
++ 
++             compileOptions {
++                 sourceCompatibility JavaVersion.VERSION_1_8
++                 targetCompatibility JavaVersion.VERSION_1_8
++             }
++ 
++             buildFeatures {
++                 viewBinding true
++             }
++         }
+  
+-     compileOptions {
+-         sourceCompatibility JavaVersion.VERSION_1_8
+-         targetCompatibility JavaVersion.VERSION_1_8
+-     }
+- 
+-     buildFeatures {
+-         viewBinding true
++         dependencies {
++ 
++             // AndroidX Core
++             implementation 'androidx.appcompat:appcompat:1.6.1'
++             implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
++             implementation 'androidx.cardview:cardview:1.0.0'
++             implementation 'com.google.android.material:material:1.11.0'
++ 
++             // Firebase (SINGLE BOM)
++             implementation platform('com.google.firebase:firebase-bom:34.7.0')
++             implementation 'com.google.firebase:firebase-auth'
++             implementation 'com.google.firebase:firebase-firestore'
++             implementation 'com.google.firebase:firebase-database'
++             implementation 'com.google.firebase:firebase-storage'
++             implementation 'com.google.firebase:firebase-analytics'
++ 
++             // Google Sign-In
++             implementation 'com.google.android.gms:play-services-auth:20.7.0'
++ 
++             // Google Maps & Location
++             implementation 'com.google.android.gms:play-services-maps:18.2.0'
++             implementation 'com.google.android.gms:play-services-location:21.1.0'
++ 
++             // CameraX (STABLE)
++             def camerax_version = "1.3.4"
++             implementation "androidx.camera:camera-core:$camerax_version"
++             implementation "androidx.camera:camera-camera2:$camerax_version"
++             implementation "androidx.camera:camera-lifecycle:$camerax_version"
++             implementation "androidx.camera:camera-view:$camerax_version"
++ 
++             // Glide
++             implementation 'com.github.bumptech.glide:glide:4.16.0'
++             annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
++ 
++             // Circle ImageView
++             implementation 'de.hdodenhof:circleimageview:3.1.0'
++ 
++             // Testing
++             testImplementation 'junit:junit:4.13.2'
++             androidTestImplementation 'androidx.test.ext:junit:1.1.5'
++             androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
++ 
++             // Unirest for HTTP requests (Mailgun API)
++             implementation 'com.mashape.unirest:unirest-java:1.4.9'
++ 
++             // Required dependencies for Unirest
++             implementation 'org.apache.httpcomponents:httpclient:4.5.13'
++             implementation 'org.apache.httpcomponents:httpasyncclient:4.1.4'
++             implementation 'org.apache.httpcomponents:httpmime:4.5.13'
++             implementation 'org.json:json:20210307'
++         }
+      }
+  }
+++<<<<<<< HEAD
+ +
+ +dependencies {
+ +    // AndroidX Core
+ +    implementation 'androidx.appcompat:appcompat:1.6.1'
+ +    implementation 'com.google.android.material:material:1.10.0'
+ +    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+ +    implementation 'androidx.cardview:cardview:1.0.0'
+ +    implementation platform('com.google.firebase:firebase-bom:34.7.0')
+ +    // Firebase
+ +    implementation 'com.google.firebase:firebase-auth'
+ +    implementation 'com.google.firebase:firebase-firestore'
+ +    implementation 'com.google.firebase:firebase-storage'
+ +    implementation 'com.google.firebase:firebase-analytics'
+ +    // Google Sign-In
+ +    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+ +
+ +    // Image Loading
+ +    implementation 'com.github.bumptech.glide:glide:4.16.0'
+ +    implementation libs.firebase.database
+ +    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+ +
+ +    // Circle ImageView
+ +    implementation 'de.hdodenhof:circleimageview:3.1.0'
+ +
+ +    // Testing
+ +    testImplementation 'junit:junit:4.13.2'
+ +    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+ +    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+ +
+ +    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+ +
+ +    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+ +    implementation 'com.google.android.gms:play-services-location:21.1.0'
+ +
+ +    implementation 'com.google.android.material:material:1.11.0'
+ +
+ +
+ +    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+ +    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+ +    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+ +
+ +    // RecyclerView (if not already added)
+ +    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+ +
+ +    // Material Components (if not already added)
+ +    implementation 'com.google.android.material:material:1.11.0'
+ +
+- }
+++}
+++=======
+++>>>>>>> remotes/origin/Aniket_v1
+diff --cc app/src/main/AndroidManifest.xml
+index e087abc,e919dca..0000000
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@@ -9,9 -5,6 +9,12 @@@
+      <uses-permission android:name="android.permission.INTERNET" />
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+++<<<<<<< HEAD
+ +    <uses-permission android:name="android.permission.CAMERA" />
+ +    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+ +    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+++=======
+++>>>>>>> remotes/origin/Aniket_v1
+      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  
+      <application
+@@@ -36,12 -28,13 +39,18 @@@
+                  <category android:name="android.intent.category.LAUNCHER" />
+              </intent-filter>
+          </activity>
+ +        <!-- Login Type Selection Activity -->
+ +        <activity
+ +            android:name=".LoginTypeActivity"
+ +            android:exported="false"
+ +            android:theme="@style/Theme.XavierProject" />
+  
++         <!-- Login Type Selection Activity -->
++         <activity
++             android:name=".LoginTypeActivity"
++             android:exported="false"
++             android:theme="@style/Theme.XavierProject" />
++ 
+          <!-- Login Activity -->
+          <activity
+              android:name=".LoginActivity"
+@@@ -63,53 -78,15 +94,60 @@@
+          <activity
+              android:name=".SettingsActivity"
+              android:exported="false"
+-             android:parentActivityName=".MainActivity" />
++             android:parentActivityName=".MainActivity"
++             android:theme="@style/Theme.XavierProject" />
++         <activity android:name=".ComplaintDetailActivity" />
++         <!-- Google Maps API Key -->
++         <meta-data
++             android:name="com.google.android.geo.API_KEY"
++             android:value="AIzaSyDUU5UwGe3VJNK-Yv1EpTXLc6xt_d1vbKA" />
++ 
+  
+ +        <activity android:name=".DiscussionActivity" />
+ +        <activity android:name=".CommentsActivity" />
+ +
+ +        <!-- Add these permissions to your AndroidManifest.xml -->
+ +        <!-- Admin Main Activity -->
+ +        <activity
+ +            android:name=".AdminMainActivity"
+ +            android:exported="false"
+ +            android:theme="@style/Theme.XavierProject" />
+ +
+ +        <!-- Government Main Activity -->
+ +        <activity
+ +            android:name=".GovMainActivity"
+ +            android:exported="false"
+ +            android:theme="@style/Theme.XavierProject" />
+ +        <!-- Admin Login Activity -->
+ +        <activity
+ +            android:name=".AdminLoginActivity"
+ +            android:exported="false" />
+ +
+ +        <!-- Government Login Activity -->
+ +        <activity
+ +            android:name=".GovLoginActivity"
+ +            android:exported="false" />
+ +
+ +        <!-- Maps Activity -->
+ +        <activity
+ +            android:name=".MapsActivity"
+ +            android:label="Maps"
+ +            android:parentActivityName=".MainActivity"
+ +            android:theme="@style/Theme.XavierProject" />
+ +
+ +        <!-- Complaints Activity -->
+ +        <activity
+ +            android:name=".ComplaintsActivity"
+ +            android:label="Complaints"
+ +            android:parentActivityName=".MainActivity"
+ +            android:theme="@style/Theme.XavierProject" />
+ +
+ +        <meta-data
+ +            android:name="com.google.android.geo.API_KEY"
+ +            android:value="AIzaSyDUU5UwGe3VJNK-Yv1EpTXLc6xt_d1vbKA" />
+ +
+ +
+ +
+      </application>
+  
+ -</manifest>
+ +</manifest>
+diff --cc app/src/main/java/com/example/xavierproject/Complaint.java
+index e2a064a,e4b21fe..0000000
+--- a/app/src/main/java/com/example/xavierproject/Complaint.java
++++ b/app/src/main/java/com/example/xavierproject/Complaint.java
+@@@ -7,6 -7,19 +7,22 @@@ public class Complaint 
+      private String status;
+      private String date;
+      private String location;
+++<<<<<<< HEAD
+++=======
++     private String category;
++     private String imageUrl;
++     private String userId;
++     private String userName;
++     private String userEmail;
++     private double latitude;
++     private double longitude;
++     private long timestamp;
++     private String reportId; // Store the actual Firebase report ID
++ 
++     // Empty constructor needed for Firebase
++     public Complaint() {
++     }
+++>>>>>>> remotes/origin/Aniket_v1
+  
+      public Complaint(String id, String title, String description, String status, String date, String location) {
+          this.id = id;
+@@@ -17,6 -30,7 +33,10 @@@
+          this.location = location;
+      }
+  
+++<<<<<<< HEAD
+++=======
++     // Getters
+++>>>>>>> remotes/origin/Aniket_v1
+      public String getId() {
+          return id;
+      }
+@@@ -40,4 -54,101 +60,104 @@@
+      public String getLocation() {
+          return location;
+      }
+++<<<<<<< HEAD
+++=======
++ 
++     public String getCategory() {
++         return category;
++     }
++ 
++     public String getImageUrl() {
++         return imageUrl;
++     }
++ 
++     public String getUserId() {
++         return userId;
++     }
++ 
++     public String getUserName() {
++         return userName;
++     }
++ 
++     public String getUserEmail() {
++         return userEmail;
++     }
++ 
++     public double getLatitude() {
++         return latitude;
++     }
++ 
++     public double getLongitude() {
++         return longitude;
++     }
++ 
++     public long getTimestamp() {
++         return timestamp;
++     }
++ 
++     public String getReportId() {
++         return reportId;
++     }
++ 
++     // Setters
++     public void setId(String id) {
++         this.id = id;
++     }
++ 
++     public void setTitle(String title) {
++         this.title = title;
++     }
++ 
++     public void setDescription(String description) {
++         this.description = description;
++     }
++ 
++     public void setStatus(String status) {
++         this.status = status;
++     }
++ 
++     public void setDate(String date) {
++         this.date = date;
++     }
++ 
++     public void setLocation(String location) {
++         this.location = location;
++     }
++ 
++     public void setCategory(String category) {
++         this.category = category;
++     }
++ 
++     public void setImageUrl(String imageUrl) {
++         this.imageUrl = imageUrl;
++     }
++ 
++     public void setUserId(String userId) {
++         this.userId = userId;
++     }
++ 
++     public void setUserName(String userName) {
++         this.userName = userName;
++     }
++ 
++     public void setUserEmail(String userEmail) {
++         this.userEmail = userEmail;
++     }
++ 
++     public void setLatitude(double latitude) {
++         this.latitude = latitude;
++     }
++ 
++     public void setLongitude(double longitude) {
++         this.longitude = longitude;
++     }
++ 
++     public void setTimestamp(long timestamp) {
++         this.timestamp = timestamp;
++     }
++ 
++     public void setReportId(String reportId) {
++         this.reportId = reportId;
++     }
+++>>>>>>> remotes/origin/Aniket_v1
+  }
+diff --cc app/src/main/java/com/example/xavierproject/ComplaintsActivity.java
+index 8578326,0de3ae0..0000000
+--- a/app/src/main/java/com/example/xavierproject/ComplaintsActivity.java
++++ b/app/src/main/java/com/example/xavierproject/ComplaintsActivity.java
+@@@ -1,27 -1,44 +1,66 @@@
+  package com.example.xavierproject;
+  
+++<<<<<<< HEAD
+ +import android.os.Bundle;
+ +import android.view.View;
+ +import android.widget.ProgressBar;
+ +import android.widget.TextView;
+ +import androidx.appcompat.app.AppCompatActivity;
+ +import androidx.recyclerview.widget.LinearLayoutManager;
+ +import androidx.recyclerview.widget.RecyclerView;
+ +import java.util.ArrayList;
+ +import java.util.List;
+ +
+ +public class ComplaintsActivity extends AppCompatActivity {
+ +
+++=======
++ import android.content.Intent;
++ import android.os.Bundle;
++ import android.util.Log;
++ import android.view.View;
++ import android.widget.ProgressBar;
++ import android.widget.TextView;
++ import android.widget.Toast;
++ import androidx.annotation.NonNull;
++ import androidx.appcompat.app.AppCompatActivity;
++ import androidx.recyclerview.widget.LinearLayoutManager;
++ import androidx.recyclerview.widget.RecyclerView;
++ import com.google.firebase.database.DataSnapshot;
++ import com.google.firebase.database.DatabaseError;
++ import com.google.firebase.database.DatabaseReference;
++ import com.google.firebase.database.FirebaseDatabase;
++ import com.google.firebase.database.ValueEventListener;
++ import java.text.SimpleDateFormat;
++ import java.util.ArrayList;
++ import java.util.Date;
++ import java.util.List;
++ import java.util.Locale;
++ 
++ public class ComplaintsActivity extends AppCompatActivity {
++ 
++     private static final String TAG = "ComplaintsActivity";
+++>>>>>>> remotes/origin/Aniket_v1
+      private RecyclerView complaintsRecyclerView;
+      private ComplaintsAdapter adapter;
+      private ProgressBar progressBar;
+      private TextView emptyTextView;
+      private String cityName;
+  
+++<<<<<<< HEAD
+ +    @Override
+ +    protected void onCreate(Bundle savedInstanceState) {
+ +        super.onCreate(savedInstanceState);
+ +        setContentView(R.layout.activity_complaints);
+++=======
++     private DatabaseReference reportsRef;
++     private DatabaseReference usersRef;
++     private ValueEventListener reportsListener;
++ 
++     @Override
++     protected void onCreate(Bundle savedInstanceState) {
++         super.onCreate(savedInstanceState);
++         setContentView(R.layout.activity_compaints);
+++>>>>>>> remotes/origin/Aniket_v1
+  
+          cityName = getIntent().getStringExtra("CITY_NAME");
+          if (cityName == null) {
+@@@ -35,7 -52,7 +74,11 @@@
+          }
+  
+          initializeViews();
+++<<<<<<< HEAD
+ +        loadComplaints();
+++=======
++         loadComplaintsFromFirebase();
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  
+      private void initializeViews() {
+@@@ -44,79 -61,181 +87,256 @@@
+          emptyTextView = findViewById(R.id.emptyTextView);
+  
+          complaintsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+++<<<<<<< HEAD
+ +        adapter = new ComplaintsAdapter(this);
+ +        complaintsRecyclerView.setAdapter(adapter);
+ +    }
+ +
+ +    private void loadComplaints() {
+++=======
++         adapter = new ComplaintsAdapter(this, complaint -> {
++             // Handle item click - open detail activity with email fetching
++             fetchUserEmailAndOpenDetail(complaint);
++         });
++         complaintsRecyclerView.setAdapter(adapter);
++     }
++ 
++     /**
++      * Γ£à NEW METHOD - Fetches user email from users table before opening detail
++      */
++     private void fetchUserEmailAndOpenDetail(Complaint complaint) {
++         String userId = complaint.getUserId();
++ 
++         if (userId == null || userId.isEmpty()) {
++             // No userId - open detail without email
++             openDetailActivity(complaint, null);
++             return;
++         }
++ 
++         // Show loading
++         progressBar.setVisibility(View.VISIBLE);
++ 
++         // Fetch email from users table
++         usersRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
++         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
++             @Override
++             public void onDataChange(@NonNull DataSnapshot snapshot) {
++                 progressBar.setVisibility(View.GONE);
++ 
++                 String userEmail = null;
++                 if (snapshot.exists()) {
++                     userEmail = snapshot.child("email").getValue(String.class);
++                     Log.d(TAG, "Fetched email for user: " + userEmail);
++                 } else {
++                     Log.w(TAG, "User not found in database: " + userId);
++                 }
++ 
++                 openDetailActivity(complaint, userEmail);
++             }
++ 
++             @Override
++             public void onCancelled(@NonNull DatabaseError error) {
++                 progressBar.setVisibility(View.GONE);
++                 Log.e(TAG, "Failed to fetch user email: " + error.getMessage());
++ 
++                 // Open detail anyway, just without email
++                 openDetailActivity(complaint, null);
++             }
++         });
++     }
++ 
++     /**
++      * Opens the detail activity with complaint and email info
++      */
++     private void openDetailActivity(Complaint complaint, String userEmail) {
++         Intent intent = new Intent(ComplaintsActivity.this, ComplaintDetailActivity.class);
++         intent.putExtra("REPORT_ID", complaint.getReportId());
++         intent.putExtra("TITLE", complaint.getTitle());
++         intent.putExtra("CATEGORY", complaint.getCategory());
++         intent.putExtra("DESCRIPTION", complaint.getDescription());
++         intent.putExtra("LATITUDE", complaint.getLatitude());
++         intent.putExtra("LONGITUDE", complaint.getLongitude());
++         intent.putExtra("IMAGE_URL", complaint.getImageUrl());
++         intent.putExtra("STATUS", complaint.getStatus());
++         intent.putExtra("USER_EMAIL", userEmail); // Pass fetched email
++         intent.putExtra("USER_NAME", complaint.getUserName());
++         startActivity(intent);
++     }
++ 
++     private void loadComplaintsFromFirebase() {
+++>>>>>>> remotes/origin/Aniket_v1
+          progressBar.setVisibility(View.VISIBLE);
+          complaintsRecyclerView.setVisibility(View.GONE);
+          emptyTextView.setVisibility(View.GONE);
+  
+++<<<<<<< HEAD
+ +        // Simulate loading with dummy data
+ +        new android.os.Handler().postDelayed(() -> {
+ +            List<Complaint> complaints = getDummyComplaints();
+ +
+ +            progressBar.setVisibility(View.GONE);
+ +
+ +            if (complaints.isEmpty()) {
+ +                emptyTextView.setVisibility(View.VISIBLE);
+ +            } else {
+ +                complaintsRecyclerView.setVisibility(View.VISIBLE);
+ +                adapter.setComplaints(complaints);
+ +            }
+ +        }, 1000);
+ +    }
+ +
+ +    private List<Complaint> getDummyComplaints() {
+ +        List<Complaint> complaints = new ArrayList<>();
+ +
+ +        complaints.add(new Complaint(
+ +                "C001",
+ +                "Road Damage",
+ +                "Large pothole on SV Road near Station",
+ +                "Pending",
+ +                "2024-01-15",
+ +                "Andheri West"
+ +        ));
+ +
+ +        complaints.add(new Complaint(
+ +                "C002",
+ +                "Street Light Not Working",
+ +                "Multiple street lights are not working in the area",
+ +                "In Progress",
+ +                "2024-01-14",
+ +                "Bandra East"
+ +        ));
+ +
+ +        complaints.add(new Complaint(
+ +                "C003",
+ +                "Garbage Collection Issue",
+ +                "Garbage not collected for 3 days",
+ +                "Resolved",
+ +                "2024-01-13",
+ +                "Powai"
+ +        ));
+ +
+ +        complaints.add(new Complaint(
+ +                "C004",
+ +                "Water Supply Problem",
+ +                "No water supply since morning",
+ +                "Pending",
+ +                "2024-01-16",
+ +                "Malad West"
+ +        ));
+ +
+ +        complaints.add(new Complaint(
+ +                "C005",
+ +                "Drainage Blockage",
+ +                "Severe waterlogging due to blocked drain",
+ +                "In Progress",
+ +                "2024-01-15",
+ +                "Goregaon"
+ +        ));
+ +
+ +        return complaints;
+++=======
++         // Initialize Firebase Database reference
++         reportsRef = FirebaseDatabase.getInstance().getReference("reports");
++ 
++         // Create listener for real-time updates
++         reportsListener = new ValueEventListener() {
++             @Override
++             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
++                 List<Complaint> complaints = new ArrayList<>();
++ 
++                 for (DataSnapshot reportSnapshot : dataSnapshot.getChildren()) {
++                     try {
++ 
++                         // Get the report ID (key)
++                         String actualReportId = reportSnapshot.getKey();
++ 
++                         // Parse Firebase data
++                         String category = reportSnapshot.child("category").getValue(String.class);
++                         String description = reportSnapshot.child("description").getValue(String.class);
++                         String imageUrl = reportSnapshot.child("imageUrl").getValue(String.class);
++                         String status = reportSnapshot.child("status").getValue(String.class);
++                         String title = reportSnapshot.child("title").getValue(String.class);
++                         String userId = reportSnapshot.child("userId").getValue(String.class);
++                         String userName = reportSnapshot.child("userName").getValue(String.class);
++ 
++                         // Get numeric values
++                         Double latitude = reportSnapshot.child("latitude").getValue(Double.class);
++                         Double longitude = reportSnapshot.child("longitude").getValue(Double.class);
++                         Long timestamp = reportSnapshot.child("timestamp").getValue(Long.class);
++ 
++                         // Create Complaint object
++                         Complaint complaint = new Complaint();
++                         complaint.setReportId(actualReportId != null ? actualReportId : "N/A");
++                         complaint.setId(userName != null ? userName : "Anonymous");
++                         complaint.setTitle(title != null ? title : "Untitled");
++                         complaint.setDescription(description != null ? description : "No description");
++                         complaint.setStatus(status != null ? status : "pending");
++                         complaint.setCategory(category != null ? category : "Other");
++                         complaint.setImageUrl(imageUrl);
++                         complaint.setUserId(userId); // Γ£à Store userId for email lookup
++                         complaint.setUserName(userName != null ? userName : "Anonymous");
++ 
++                         if (latitude != null) complaint.setLatitude(latitude);
++                         if (longitude != null) complaint.setLongitude(longitude);
++                         if (timestamp != null) {
++                             complaint.setTimestamp(timestamp);
++                             String dateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
++                                     .format(new Date(timestamp));
++                             complaint.setDate(dateStr);
++                         } else {
++                             complaint.setDate("N/A");
++                         }
++ 
++                         complaint.setLocation(category != null ? category : "Unknown Location");
++ 
++                         complaints.add(complaint);
++ 
++                     } catch (Exception e) {
++                         Log.e(TAG, "Error parsing complaint: " + e.getMessage());
++                     }
++                 }
++ 
++                 // Update UI
++                 progressBar.setVisibility(View.GONE);
++ 
++                 if (complaints.isEmpty()) {
++                     emptyTextView.setVisibility(View.VISIBLE);
++                     complaintsRecyclerView.setVisibility(View.GONE);
++                 } else {
++                     emptyTextView.setVisibility(View.GONE);
++                     complaintsRecyclerView.setVisibility(View.VISIBLE);
++                     adapter.setComplaints(complaints);
++                 }
++ 
++                 Log.d(TAG, "Loaded " + complaints.size() + " complaints from Firebase");
++             }
++ 
++             @Override
++             public void onCancelled(@NonNull DatabaseError databaseError) {
++                 progressBar.setVisibility(View.GONE);
++                 emptyTextView.setVisibility(View.VISIBLE);
++                 emptyTextView.setText("Error loading complaints");
++ 
++                 Toast.makeText(ComplaintsActivity.this,
++                         "Failed to load complaints: " + databaseError.getMessage(),
++                         Toast.LENGTH_SHORT).show();
++ 
++                 Log.e(TAG, "Database error: " + databaseError.getMessage());
++             }
++         };
++ 
++         // Attach the listener
++         reportsRef.addValueEventListener(reportsListener);
++     }
++ 
++     @Override
++     protected void onDestroy() {
++         super.onDestroy();
++         // Remove listener to prevent memory leaks
++         if (reportsRef != null && reportsListener != null) {
++             reportsRef.removeEventListener(reportsListener);
++         }
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  
+      @Override
+diff --cc app/src/main/java/com/example/xavierproject/ComplaintsAdapter.java
+index 1599827,43556dc..0000000
+--- a/app/src/main/java/com/example/xavierproject/ComplaintsAdapter.java
++++ b/app/src/main/java/com/example/xavierproject/ComplaintsAdapter.java
+@@@ -15,10 -15,16 +15,23 @@@ public class ComplaintsAdapter extends 
+  
+      private Context context;
+      private List<Complaint> complaints;
+++<<<<<<< HEAD
+ +
+ +    public ComplaintsAdapter(Context context) {
+ +        this.context = context;
+ +        this.complaints = new ArrayList<>();
+++=======
++     private OnComplaintClickListener clickListener;
++ 
++     public interface OnComplaintClickListener {
++         void onComplaintClick(Complaint complaint);
++     }
++ 
++     public ComplaintsAdapter(Context context, OnComplaintClickListener listener) {
++         this.context = context;
++         this.complaints = new ArrayList<>();
++         this.clickListener = listener;
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  
+      public void setComplaints(List<Complaint> complaints) {
+@@@ -37,7 -43,7 +50,11 @@@
+      public void onBindViewHolder(@NonNull ComplaintViewHolder holder, int position) {
+          Complaint complaint = complaints.get(position);
+  
+++<<<<<<< HEAD
+ +        holder.idTextView.setText(complaint.getId());
+++=======
++         holder.idTextView.setText(complaint.getId()); // This will show username
+++>>>>>>> remotes/origin/Aniket_v1
+          holder.titleTextView.setText(complaint.getTitle());
+          holder.descriptionTextView.setText(complaint.getDescription());
+          holder.statusTextView.setText(complaint.getStatus());
+@@@ -46,18 -52,30 +63,44 @@@
+  
+          // Set status color
+          int statusColor;
+++<<<<<<< HEAD
+ +        switch (complaint.getStatus()) {
+ +            case "Resolved":
+ +                statusColor = context.getColor(R.color.status_resolved);
+ +                break;
+ +            case "In Progress":
+ +                statusColor = context.getColor(R.color.status_in_progress);
+ +                break;
+ +            default: // Pending
+++=======
++         String status = complaint.getStatus() != null ? complaint.getStatus().toLowerCase() : "pending";
++         switch (status) {
++             case "resolved":
++                 statusColor = context.getColor(R.color.status_resolved);
++                 break;
++             case "ongoing":
++             case "in progress":
++                 statusColor = context.getColor(R.color.status_in_progress);
++                 break;
++             case "acknowledged":
++                 statusColor = context.getColor(R.color.accent);
++                 break;
++             default: // pending
+++>>>>>>> remotes/origin/Aniket_v1
+                  statusColor = context.getColor(R.color.status_pending);
+                  break;
+          }
+          holder.statusTextView.setTextColor(statusColor);
+++<<<<<<< HEAD
+++=======
++ 
++         // Set click listener
++         holder.itemView.setOnClickListener(v -> {
++             if (clickListener != null) {
++                 clickListener.onComplaintClick(complaint);
++             }
++         });
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  
+      @Override
+diff --cc app/src/main/java/com/example/xavierproject/HomeFragment.java
+index d5634a0,508a239..0000000
+--- a/app/src/main/java/com/example/xavierproject/HomeFragment.java
++++ b/app/src/main/java/com/example/xavierproject/HomeFragment.java
+@@@ -9,7 -9,7 +9,11 @@@ import android.widget.TextView
+  import androidx.annotation.NonNull;
+  import androidx.annotation.Nullable;
+  import androidx.fragment.app.Fragment;
+++<<<<<<< HEAD
+ +import com.google.android.material.card.MaterialCardView;
+++=======
++ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+++>>>>>>> remotes/origin/Aniket_v1
+  import com.google.firebase.auth.FirebaseAuth;
+  import com.google.firebase.auth.FirebaseUser;
+  import de.hdodenhof.circleimageview.CircleImageView;
+@@@ -19,7 -19,8 +23,12 @@@ public class HomeFragment extends Fragm
+      private FirebaseAuth mAuth;
+      private TextView welcomeTextView, subtitleTextView;
+      private CircleImageView profileImageView;
+++<<<<<<< HEAD
+ +    private MaterialCardView discussionCard;
+++=======
++     private View mapsContainer;
++     private View complaintBtn;
+++>>>>>>> remotes/origin/Aniket_v1
+  
+      @Nullable
+      @Override
+@@@ -39,14 -40,45 +48,56 @@@
+          welcomeTextView = view.findViewById(R.id.welcomeTextView);
+          subtitleTextView = view.findViewById(R.id.subtitleTextView);
+          profileImageView = view.findViewById(R.id.profileImageView);
+++<<<<<<< HEAD
+ +        discussionCard = view.findViewById(R.id.discussionCard);
+ +    }
+ +
+ +    private void setupClickListeners() {
+ +        discussionCard.setOnClickListener(v -> {
+ +            Intent intent = new Intent(getActivity(), DiscussionActivity.class);
+ +            startActivity(intent);
+ +        });
+++=======
++         mapsContainer = view.findViewById(R.id.maps_container);
++         complaintBtn = view.findViewById(R.id.complaint_btn);
++     }
++ 
++     private void setupClickListeners() {
++         mapsContainer.setOnClickListener(v -> showCitySelector("maps"));
++         complaintBtn.setOnClickListener(v -> showCitySelector("complaints"));
++     }
++ 
++     private void showCitySelector(String actionType) {
++         String[] cities = {"Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad"};
++ 
++         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
++         builder.setTitle("Select City");
++         builder.setItems(cities, (dialog, which) -> {
++             String selectedCity = cities[which];
++             if (selectedCity.equals("Mumbai")) {
++                 if (actionType.equals("maps")) {
++                     // Open Maps Activity
++                     Intent intent = new Intent(getActivity(), MapsActivity.class);
++                     intent.putExtra("CITY_NAME", selectedCity);
++                     startActivity(intent);
++                 } else if (actionType.equals("complaints")) {
++                     // Open Complaints Activity
++                     Intent intent = new Intent(getActivity(), ComplaintsActivity.class);
++                     intent.putExtra("CITY_NAME", selectedCity);
++                     startActivity(intent);
++                 }
++             } else {
++                 // Show message that other cities are coming soon
++                 new MaterialAlertDialogBuilder(requireContext())
++                         .setTitle("Coming Soon")
++                         .setMessage(selectedCity + " is currently not available. We're working on it!")
++                         .setPositiveButton("OK", null)
++                         .show();
++             }
++         });
++         builder.setNegativeButton("Cancel", null);
++         builder.show();
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  
+      private void loadUserData() {
+diff --cc app/src/main/java/com/example/xavierproject/LoginActivity.java
+index 6709d4e,a58ee9e..0000000
+--- a/app/src/main/java/com/example/xavierproject/LoginActivity.java
++++ b/app/src/main/java/com/example/xavierproject/LoginActivity.java
+@@@ -17,6 -17,10 +17,13 @@@ import com.google.firebase.auth.Firebas
+  import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+  import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+  import com.google.firebase.auth.FirebaseUser;
+++<<<<<<< HEAD
+++=======
++ import com.google.firebase.database.DatabaseReference;
++ import com.google.firebase.database.FirebaseDatabase;
++ import java.util.HashMap;
++ import java.util.Map;
+++>>>>>>> remotes/origin/Aniket_v1
+  
+  public class LoginActivity extends AppCompatActivity {
+  
+@@@ -24,27 -28,27 +31,42 @@@
+  
+      private EditText emailEditText, passwordEditText;
+      private Button loginButton;
+++<<<<<<< HEAD
+ +    private TextView forgotPasswordTextView;
+++=======
++     private TextView forgotPasswordTextView, titleTextView;
+++>>>>>>> remotes/origin/Aniket_v1
+      private ProgressBar progressBar;
+      private View rootView;
+      private String loginType;
+  
+      private FirebaseAuth mAuth;
+++<<<<<<< HEAD
+++=======
++     private DatabaseReference usersRef;
+++>>>>>>> remotes/origin/Aniket_v1
+  
+      @Override
+      protected void onCreate(Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+ -        setContentView(R.layout.activity_login);
+ +
+ +        // Get login type from intent
+ +        loginType = getIntent().getStringExtra("LOGIN_TYPE");
+ +        if (loginType == null) {
+ +            loginType = "user";
+ +        }
+ +
+ +        // Set the appropriate layout based on login type
+ +        setLayout();
+  
++         // Get login type from intent
++         loginType = getIntent().getStringExtra("LOGIN_TYPE");
++         if (loginType == null) {
++             loginType = "user";
++         }
++ 
+          initializeViews();
++         updateUIForLoginType();
+          setupFirebase();
+          setupClickListeners();
+      }
+@@@ -72,8 -63,23 +95,26 @@@
+          progressBar = findViewById(R.id.progressBar);
+      }
+  
++     private void updateUIForLoginType() {
++         switch (loginType) {
++             case "admin":
++                 titleTextView.setText("Admin Login");
++                 break;
++             case "government":
++                 titleTextView.setText("Government Official Login");
++                 break;
++             default:
++                 titleTextView.setText("User Login");
++                 break;
++         }
++     }
++ 
+      private void setupFirebase() {
+          mAuth = FirebaseAuth.getInstance();
+++<<<<<<< HEAD
+++=======
++         usersRef = FirebaseDatabase.getInstance().getReference("users");
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  
+      private void setupClickListeners() {
+@@@ -98,6 -103,9 +138,12 @@@
+                          Log.d(TAG, "signInWithEmail:success");
+                          FirebaseUser user = mAuth.getCurrentUser();
+                          if (user != null) {
+++<<<<<<< HEAD
+++=======
++                             // Γ£à SAVE EMAIL TO REALTIME DATABASE
++                             saveUserEmailToDatabase(user);
++ 
+++>>>>>>> remotes/origin/Aniket_v1
+                              if (!user.isEmailVerified()) {
+                                  Snackbar.make(rootView,
+                                                  "Please verify your email for full access",
+diff --cc app/src/main/java/com/example/xavierproject/LoginTypeActivity.java
+index fa44639,39c65eb..0000000
+--- a/app/src/main/java/com/example/xavierproject/LoginTypeActivity.java
++++ b/app/src/main/java/com/example/xavierproject/LoginTypeActivity.java
+@@@ -2,6 -2,7 +2,10 @@@ package com.example.xavierproject
+  
+  import android.content.Intent;
+  import android.os.Bundle;
+++<<<<<<< HEAD
+++=======
++ import android.view.View;
+++>>>>>>> remotes/origin/Aniket_v1
+  import androidx.appcompat.app.AppCompatActivity;
+  import com.google.android.material.card.MaterialCardView;
+  
+@@@ -25,22 -26,14 +29,34 @@@ public class LoginTypeActivity extends 
+      }
+  
+      private void setupClickListeners() {
+++<<<<<<< HEAD
+ +        // User Login
+ +        userLoginCard.setOnClickListener(v -> {
+ +            Intent intent = new Intent(LoginTypeActivity.this, LoginActivity.class);
+ +            startActivity(intent);
+ +        });
+ +
+ +        // Admin Login
+ +        adminLoginCard.setOnClickListener(v -> {
+ +            Intent intent = new Intent(LoginTypeActivity.this, AdminLoginActivity.class);
+ +            startActivity(intent);
+ +        });
+ +
+ +        // Government Login
+ +        govLoginCard.setOnClickListener(v -> {
+ +            Intent intent = new Intent(LoginTypeActivity.this, GovLoginActivity.class);
+ +            startActivity(intent);
+ +        });
+++=======
++         userLoginCard.setOnClickListener(v -> openLogin("user"));
++         adminLoginCard.setOnClickListener(v -> openLogin("admin"));
++         govLoginCard.setOnClickListener(v -> openLogin("government"));
++     }
++ 
++     private void openLogin(String loginType) {
++         Intent intent = new Intent(LoginTypeActivity.this, LoginActivity.class);
++         intent.putExtra("LOGIN_TYPE", loginType);
++         startActivity(intent);
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  }
+diff --cc app/src/main/java/com/example/xavierproject/MapsActivity.java
+index 8c92592,8bfe46f..0000000
+--- a/app/src/main/java/com/example/xavierproject/MapsActivity.java
++++ b/app/src/main/java/com/example/xavierproject/MapsActivity.java
+@@@ -1,6 -1,9 +1,12 @@@
+  package com.example.xavierproject;
+  
+  import android.os.Bundle;
+++<<<<<<< HEAD
+++=======
++ import android.util.Log;
++ import android.view.View;
++ import android.widget.ProgressBar;
+++>>>>>>> remotes/origin/Aniket_v1
+  import android.widget.Toast;
+  import androidx.annotation.NonNull;
+  import androidx.appcompat.app.AppCompatActivity;
+@@@ -8,19 -11,43 +14,56 @@@ import com.google.android.gms.maps.Came
+  import com.google.android.gms.maps.GoogleMap;
+  import com.google.android.gms.maps.OnMapReadyCallback;
+  import com.google.android.gms.maps.SupportMapFragment;
+++<<<<<<< HEAD
+ +import com.google.android.gms.maps.model.LatLng;
+ +import com.google.android.gms.maps.model.MarkerOptions;
+ +
+ +public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+ +
+ +    private GoogleMap mMap;
+ +    private String cityName;
+++=======
++ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
++ import com.google.android.gms.maps.model.LatLng;
++ import com.google.android.gms.maps.model.LatLngBounds;
++ import com.google.android.gms.maps.model.MarkerOptions;
++ import com.google.firebase.database.DataSnapshot;
++ import com.google.firebase.database.DatabaseError;
++ import com.google.firebase.database.DatabaseReference;
++ import com.google.firebase.database.FirebaseDatabase;
++ import com.google.firebase.database.ValueEventListener;
++ import java.util.ArrayList;
++ import java.util.List;
++ 
++ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
++ 
++     private static final String TAG = "MapsActivity";
++     private GoogleMap mMap;
++     private String cityName;
++     private DatabaseReference reportsRef;
++     private ProgressBar progressBar;
++     private List<LatLng> reportLocations;
++     private ValueEventListener valueEventListener;
+++>>>>>>> remotes/origin/Aniket_v1
+  
+      @Override
+      protected void onCreate(Bundle savedInstanceState) {
+          super.onCreate(savedInstanceState);
+          setContentView(R.layout.activity_maps);
+  
+++<<<<<<< HEAD
+++=======
++         // Initialize Firebase
++         reportsRef = FirebaseDatabase.getInstance().getReference("reports");
++         reportLocations = new ArrayList<>();
++ 
++         // Initialize progress bar
++         progressBar = findViewById(R.id.progressBar);
++         if (progressBar != null) {
++             progressBar.setVisibility(View.VISIBLE);
++         }
++ 
+++>>>>>>> remotes/origin/Aniket_v1
+          // Get city name from intent
+          cityName = getIntent().getStringExtra("CITY_NAME");
+          if (cityName == null) {
+@@@ -29,7 -56,7 +72,11 @@@
+  
+          // Set up action bar with back button
+          if (getSupportActionBar() != null) {
+++<<<<<<< HEAD
+ +            getSupportActionBar().setTitle(cityName + " Map");
+++=======
++             getSupportActionBar().setTitle(cityName + " - Reports Map");
+++>>>>>>> remotes/origin/Aniket_v1
+              getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+              getSupportActionBar().setDisplayShowHomeEnabled(true);
+          }
+@@@ -45,21 -72,192 +92,210 @@@
+      @Override
+      public void onMapReady(@NonNull GoogleMap googleMap) {
+          mMap = googleMap;
+++<<<<<<< HEAD
+ +
+ +        // Mumbai coordinates
+ +        LatLng mumbai = new LatLng(19.0760, 72.8777);
+ +
+ +        mMap.addMarker(new MarkerOptions()
+ +                .position(mumbai)
+ +                .title("Mumbai"));
+ +
+ +        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mumbai, 12));
+ +
+ +        // Enable zoom controls
+ +        mMap.getUiSettings().setZoomControlsEnabled(true);
+ +        mMap.getUiSettings().setCompassEnabled(true);
+ +
+ +        Toast.makeText(this, "Welcome to " + cityName, Toast.LENGTH_SHORT).show();
+++=======
++         Log.d(TAG, "Map is ready!");
++ 
++         // Enable map controls
++         mMap.getUiSettings().setZoomControlsEnabled(true);
++         mMap.getUiSettings().setCompassEnabled(true);
++         mMap.getUiSettings().setZoomGesturesEnabled(true);
++         mMap.getUiSettings().setScrollGesturesEnabled(true);
++         mMap.getUiSettings().setTiltGesturesEnabled(true);
++         mMap.getUiSettings().setRotateGesturesEnabled(true);
++ 
++         // Default Mumbai location
++         LatLng defaultLocation = new LatLng(19.0760, 72.8777);
++         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12));
++ 
++         // Load reports from Firebase
++         loadReportsFromFirebase();
++     }
++ 
++     private void loadReportsFromFirebase() {
++         Log.d(TAG, "Loading reports from Firebase...");
++ 
++         valueEventListener = new ValueEventListener() {
++             @Override
++             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
++                 Log.d(TAG, "Firebase data received. Children count: " + dataSnapshot.getChildrenCount());
++ 
++                 // Clear previous markers and locations
++                 if (mMap != null) {
++                     mMap.clear();
++                 }
++                 reportLocations.clear();
++ 
++                 int markerCount = 0;
++ 
++                 // Loop through all reports
++                 for (DataSnapshot reportSnapshot : dataSnapshot.getChildren()) {
++                     try {
++                         // Get report data
++                         String reportId = reportSnapshot.getKey();
++                         Double latitude = reportSnapshot.child("latitude").getValue(Double.class);
++                         Double longitude = reportSnapshot.child("longitude").getValue(Double.class);
++                         String category = reportSnapshot.child("category").getValue(String.class);
++                         String description = reportSnapshot.child("description").getValue(String.class);
++                         String status = reportSnapshot.child("status").getValue(String.class);
++                         String title = reportSnapshot.child("title").getValue(String.class);
++ 
++                         Log.d(TAG, "Report: " + reportId + " | Lat: " + latitude + " | Lng: " + longitude + " | Category: " + category);
++ 
++                         // Validate coordinates
++                         if (latitude != null && longitude != null && latitude != 0.0 && longitude != 0.0) {
++                             LatLng location = new LatLng(latitude, longitude);
++                             reportLocations.add(location);
++ 
++                             // Get marker color based on category
++                             float markerColor = getMarkerColorByCategory(category);
++ 
++                             // Create marker title
++                             String markerTitle = title != null ? title : (category != null ? category : "Report");
++ 
++                             // Create snippet
++                             String snippet = "";
++                             if (status != null && !status.isEmpty()) {
++                                 snippet = "Status: " + status;
++                             }
++                             if (description != null && !description.isEmpty()) {
++                                 if (!snippet.isEmpty()) {
++                                     snippet += "\n";
++                                 }
++                                 snippet += description.length() > 50 ?
++                                         description.substring(0, 50) + "..." : description;
++                             }
++                             if (snippet.isEmpty()) {
++                                 snippet = "No description";
++                             }
++ 
++                             // Add marker to map
++                             MarkerOptions markerOptions = new MarkerOptions()
++                                     .position(location)
++                                     .title(markerTitle)
++                                     .snippet(snippet)
++                                     .icon(BitmapDescriptorFactory.defaultMarker(markerColor));
++ 
++                             mMap.addMarker(markerOptions);
++                             markerCount++;
++                             Log.d(TAG, "Marker added: " + markerTitle + " at " + latitude + ", " + longitude);
++                         } else {
++                             Log.w(TAG, "Invalid coordinates for report: " + reportId);
++                         }
++                     } catch (Exception e) {
++                         Log.e(TAG, "Error processing report", e);
++                         e.printStackTrace();
++                     }
++                 }
++ 
++                 if (progressBar != null) {
++                     progressBar.setVisibility(View.GONE);
++                 }
++ 
++                 Log.d(TAG, "Total markers added: " + markerCount);
++ 
++                 // Show count of markers
++                 if (markerCount > 0) {
++                     Toast.makeText(MapsActivity.this, markerCount + " reports loaded", Toast.LENGTH_SHORT).show();
++ 
++                     // Adjust camera to show all markers
++                     adjustCameraToMarkers();
++                 } else {
++                     Log.w(TAG, "No valid report locations found");
++                     Toast.makeText(MapsActivity.this, "No reports found", Toast.LENGTH_SHORT).show();
++                 }
++             }
++ 
++             @Override
++             public void onCancelled(@NonNull DatabaseError databaseError) {
++                 Log.e(TAG, "Firebase error: " + databaseError.getMessage());
++                 if (progressBar != null) {
++                     progressBar.setVisibility(View.GONE);
++                 }
++                 Toast.makeText(MapsActivity.this,
++                         "Failed to load reports: " + databaseError.getMessage(),
++                         Toast.LENGTH_SHORT).show();
++             }
++         };
++ 
++         reportsRef.addValueEventListener(valueEventListener);
++     }
++ 
++     // Get marker color based on category
++     private float getMarkerColorByCategory(String category) {
++         if (category == null) {
++             return BitmapDescriptorFactory.HUE_RED;
++         }
++ 
++         switch (category.toLowerCase().trim()) {
++             case "road":
++                 return BitmapDescriptorFactory.HUE_ORANGE;
++             case "water":
++                 return BitmapDescriptorFactory.HUE_AZURE;
++             case "electricity":
++                 return BitmapDescriptorFactory.HUE_YELLOW;
++             case "waste":
++                 return BitmapDescriptorFactory.HUE_GREEN;
++             case "safety":
++                 return BitmapDescriptorFactory.HUE_RED;
++             case "public transport":
++                 return BitmapDescriptorFactory.HUE_VIOLET;
++             case "infrastructure":
++                 return BitmapDescriptorFactory.HUE_ROSE;
++             case "health":
++                 return BitmapDescriptorFactory.HUE_MAGENTA;
++             default:
++                 return BitmapDescriptorFactory.HUE_RED;
++         }
++     }
++ 
++     private void adjustCameraToMarkers() {
++         if (reportLocations.isEmpty() || mMap == null) {
++             return;
++         }
++ 
++         // Delay camera animation to ensure map is ready
++         mMap.setOnMapLoadedCallback(() -> {
++             try {
++                 if (reportLocations.size() == 1) {
++                     // If only one marker, zoom to it
++                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(reportLocations.get(0), 15));
++                 } else {
++                     // If multiple markers, fit all in view
++                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
++                     for (LatLng location : reportLocations) {
++                         builder.include(location);
++                     }
++                     LatLngBounds bounds = builder.build();
++ 
++                     // Add padding (150 pixels) and animate camera
++                     int padding = 150;
++                     mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding), 1500, null);
++                 }
++             } catch (Exception e) {
++                 Log.e(TAG, "Error adjusting camera", e);
++                 // Fallback: center on first marker
++                 if (!reportLocations.isEmpty()) {
++                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(reportLocations.get(0), 12));
++                 }
++             }
++         });
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  
+      @Override
+@@@ -73,4 -271,13 +309,16 @@@
+          super.onBackPressed();
+          finish();
+      }
+++<<<<<<< HEAD
+++=======
++ 
++     @Override
++     protected void onDestroy() {
++         super.onDestroy();
++         // Remove Firebase listener to prevent memory leaks
++         if (reportsRef != null && valueEventListener != null) {
++             reportsRef.removeEventListener(valueEventListener);
++         }
++     }
+++>>>>>>> remotes/origin/Aniket_v1
+  }
+diff --cc app/src/main/java/com/example/xavierproject/Report.java
+index 1c56671,a702b4d..0000000
+--- a/app/src/main/java/com/example/xavierproject/Report.java
++++ b/app/src/main/java/com/example/xavierproject/Report.java
+@@@ -1,66 -1,26 +1,90 @@@
+  package com.example.xavierproject;
+  
+++<<<<<<< HEAD
+ +import java.util.Map;
+ +
+ +public class Report {
+ +    private String reportId;
+ +    private String userId;
+ +    private String title;
+ +    private String category;
+ +    private String description;
+ +    private String imageUrl;
+ +    private String imagePublicId;
+ +    private String thumbnailUrl;
+ +    private long timestamp;
+ +    private String status;
+ +    private Map<String, Object> location;
+ +
+ +    // Default constructor required for Firebase
+ +    public Report() {
+ +    }
+ +
+ +    public Report(String reportId, String userId, String title, String category,
+ +                  String description, String imageUrl, String imagePublicId,
+ +                  String thumbnailUrl, long timestamp, String status,
+ +                  Map<String, Object> location) {
+ +        this.reportId = reportId;
+ +        this.userId = userId;
+ +        this.title = title;
+ +        this.category = category;
+ +        this.description = description;
+ +        this.imageUrl = imageUrl;
+ +        this.imagePublicId = imagePublicId;
+ +        this.thumbnailUrl = thumbnailUrl;
+ +        this.timestamp = timestamp;
+ +        this.status = status;
+ +        this.location = location;
+ +    }
+ +
+ +    // Getters and Setters
+ +    public String getReportId() {
+ +        return reportId;
+ +    }
+ +
+ +    public void setReportId(String reportId) {
+ +        this.reportId = reportId;
+ +    }
+ +
+ +    public String getUserId() {
+ +        return userId;
+ +    }
+ +
+ +    public void setUserId(String userId) {
+ +        this.userId = userId;
+ +    }
+ +
+ +    public String getTitle() {
+ +        return title;
+ +    }
+ +
+ +    public void setTitle(String title) {
+ +        this.title = title;
+ +    }
+ +
+++=======
++ public class Report {
++     private String category;
++     private String description;
++     private String imageUrl;
++     private double latitude;
++     private double longitude;
++     private String reportId;
++ 
++     // Empty constructor required for Firebase
++     public Report() {
++     }
++ 
++     public Report(String category, String description, String imageUrl, double latitude, double longitude) {
++         this.category = category;
++         this.description = description;
++         this.imageUrl = imageUrl;
++         this.latitude = latitude;
++         this.longitude = longitude;
++     }
++ 
++     // Getters and Setters
+++>>>>>>> remotes/origin/Aniket_v1
+      public String getCategory() {
+          return category;
+      }
+@@@ -85,73 -45,27 +109,98 @@@
+          this.imageUrl = imageUrl;
+      }
+  
+++<<<<<<< HEAD
+ +    public String getImagePublicId() {
+ +        return imagePublicId;
+ +    }
+ +
+ +    public void setImagePublicId(String imagePublicId) {
+ +        this.imagePublicId = imagePublicId;
+ +    }
+ +
+ +    public String getThumbnailUrl() {
+ +        return thumbnailUrl;
+ +    }
+ +
+ +    public void setThumbnailUrl(String thumbnailUrl) {
+ +        this.thumbnailUrl = thumbnailUrl;
+ +    }
+ +
+ +    public long getTimestamp() {
+ +        return timestamp;
+ +    }
+ +
+ +    public void setTimestamp(long timestamp) {
+ +        this.timestamp = timestamp;
+ +    }
+ +
+ +    public String getStatus() {
+ +        return status;
+ +    }
+ +
+ +    public void setStatus(String status) {
+ +        this.status = status;
+ +    }
+ +
+ +    public Map<String, Object> getLocation() {
+ +        return location;
+ +    }
+ +
+ +    public void setLocation(Map<String, Object> location) {
+ +        this.location = location;
+ +    }
+ +
+ +    /**
+ +     * Get latitude from location map
+ +     */
+ +    public double getLatitude() {
+ +        if (location != null && location.containsKey("latitude")) {
+ +            Object lat = location.get("latitude");
+ +            if (lat instanceof Double) {
+ +                return (Double) lat;
+ +            } else if (lat instanceof Long) {
+ +                return ((Long) lat).doubleValue();
+ +            }
+ +        }
+ +        return 0.0;
+ +    }
+ +
+ +    /**
+ +     * Get longitude from location map
+ +     */
+ +    public double getLongitude() {
+ +        if (location != null && location.containsKey("longitude")) {
+ +            Object lng = location.get("longitude");
+ +            if (lng instanceof Double) {
+ +                return (Double) lng;
+ +            } else if (lng instanceof Long) {
+ +                return ((Long) lng).doubleValue();
+ +            }
+ +        }
+ +        return 0.0;
+++=======
++     public double getLatitude() {
++         return latitude;
++     }
++ 
++     public void setLatitude(double latitude) {
++         this.latitude = latitude;
++     }
++ 
++     public double getLongitude() {
++         return longitude;
++     }
++ 
++     public void setLongitude(double longitude) {
++         this.longitude = longitude;
++     }
++ 
++     public String getReportId() {
++         return reportId;
++     }
++ 
++     public void setReportId(String reportId) {
++         this.reportId = reportId;
+++>>>>>>> remotes/origin/Aniket_v1
+      }
+  }
+diff --cc app/src/main/java/com/example/xavierproject/SettingsFragment.java
+index 2fdb6e9,577e04e..0000000
+--- a/app/src/main/java/com/example/xavierproject/SettingsFragment.java
++++ b/app/src/main/java/com/example/xavierproject/SettingsFragment.java
+@@@ -230,7 -224,7 +230,11 @@@ public class SettingsFragment extends F
+                  .show();
+      }
+  
+++<<<<<<< HEAD
+ +    private void navigateToLoginType() {
+++=======
++     private void navigateToLogin() {
+++>>>>>>> remotes/origin/Aniket_v1
+          Intent intent = new Intent(getActivity(), LoginTypeActivity.class);
+          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+          startActivity(intent);
+diff --cc app/src/main/res/layout/activity_login_type.xml
+index c8a9b53,5814c99..0000000
+--- a/app/src/main/res/layout/activity_login_type.xml
++++ b/app/src/main/res/layout/activity_login_type.xml
+@@@ -11,7 -11,6 +11,10 @@@
+          android:fillViewport="true">
+  
+          <LinearLayout
+++<<<<<<< HEAD
+ +            android:id="@+id/admin_login_btn"
+++=======
+++>>>>>>> remotes/origin/Aniket_v1
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+@@@ -69,7 -68,6 +72,10 @@@
+                  android:foreground="?attr/selectableItemBackground">
+  
+                  <LinearLayout
+++<<<<<<< HEAD
+ +                    android:id="@+id/user_login_btn"
+++=======
+++>>>>>>> remotes/origin/Aniket_v1
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+@@@ -206,7 -204,6 +212,10 @@@
+                  android:foreground="?attr/selectableItemBackground">
+  
+                  <LinearLayout
+++<<<<<<< HEAD
+ +                    android:id="@+id/gov_login_btn"
+++=======
+++>>>>>>> remotes/origin/Aniket_v1
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal"
+diff --cc app/src/main/res/layout/activity_maps.xml
+index d32bc5e,51339e8..0000000
+--- a/app/src/main/res/layout/activity_maps.xml
++++ b/app/src/main/res/layout/activity_maps.xml
+@@@ -1,56 -1,156 +1,213 @@@
+  <?xml version="1.0" encoding="utf-8"?>
+++<<<<<<< HEAD
+ +<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+++=======
++ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+++>>>>>>> remotes/origin/Aniket_v1
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+++<<<<<<< HEAD
+ +    android:orientation="vertical"
+ +    android:background="@color/background"
+ +    tools:context=".MapsActivity">
+ +
+ +    <!-- Map Container Card -->
+ +    <com.google.android.material.card.MaterialCardView
+ +        android:layout_width="match_parent"
+ +        android:layout_height="0dp"
+ +        android:layout_weight="1"
+ +        android:layout_margin="16dp"
+ +        app:cardCornerRadius="20dp"
+ +        app:cardElevation="4dp"
+ +        app:cardBackgroundColor="@color/surface">
+ +
+ +        <fragment
+ +            android:id="@+id/map"
+ +            android:name="com.google.android.gms.maps.SupportMapFragment"
+ +            android:layout_width="match_parent"
+ +            android:layout_height="match_parent" />
+ +
+ +    </com.google.android.material.card.MaterialCardView>
+ +
+ +    <!-- Info Section -->
+ +    <LinearLayout
+ +        android:layout_width="match_parent"
+ +        android:layout_height="wrap_content"
+ +        android:orientation="vertical"
+ +        android:padding="16dp"
+ +        android:paddingBottom="24dp">
+ +
+ +        <TextView
+ +            android:layout_width="wrap_content"
+ +            android:layout_height="wrap_content"
+ +            android:text="Explore Mumbai"
+ +            android:textColor="@color/text_primary"
+ +            android:textSize="20sp"
+ +            android:textStyle="bold"
+ +            android:fontFamily="sans-serif-medium" />
+ +
+ +        <TextView
+ +            android:layout_width="wrap_content"
+ +            android:layout_height="wrap_content"
+ +            android:layout_marginTop="4dp"
+ +            android:text="Discover locations and navigate the city"
+ +            android:textColor="@color/text_secondary"
+ +            android:textSize="14sp" />
+ +
+ +    </LinearLayout>
+ +
+- </LinearLayout>
+++</LinearLayout>
+++=======
++     tools:context=".MapsActivity">
++ 
++     <!-- Map Fragment -->
++     <fragment
++         android:id="@+id/map"
++         android:name="com.google.android.gms.maps.SupportMapFragment"
++         android:layout_width="match_parent"
++         android:layout_height="match_parent" />
++ 
++     <!-- Loading Progress Bar -->
++     <ProgressBar
++         android:id="@+id/progressBar"
++         android:layout_width="wrap_content"
++         android:layout_height="wrap_content"
++         android:layout_centerInParent="true"
++         android:visibility="gone"
++         android:indeterminate="true" />
++ 
++     <!-- Legend Card -->
++     <com.google.android.material.card.MaterialCardView
++         android:layout_width="wrap_content"
++         android:layout_height="wrap_content"
++         android:layout_alignParentEnd="true"
++         android:layout_alignParentTop="true"
++         android:layout_margin="16dp"
++         app:cardCornerRadius="12dp"
++         app:cardElevation="4dp">
++ 
++         <LinearLayout
++             android:layout_width="wrap_content"
++             android:layout_height="wrap_content"
++             android:orientation="vertical"
++             android:padding="12dp">
++ 
++             <TextView
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:text="Category Legend"
++                 android:textStyle="bold"
++                 android:textSize="14sp"
++                 android:layout_marginBottom="8dp" />
++ 
++             <!-- Road -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="20dp"
++                     android:layout_height="20dp"
++                     android:background="#FF9800"
++                     android:layout_marginEnd="8dp" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="Road"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Water -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="20dp"
++                     android:layout_height="20dp"
++                     android:background="#00FFFF"
++                     android:layout_marginEnd="8dp" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="Water"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Electricity -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="20dp"
++                     android:layout_height="20dp"
++                     android:background="#FFEB3B"
++                     android:layout_marginEnd="8dp" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="Electricity"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Waste -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="20dp"
++                     android:layout_height="20dp"
++                     android:background="#4CAF50"
++                     android:layout_marginEnd="8dp" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="Waste"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Safety -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical">
++ 
++                 <View
++                     android:layout_width="20dp"
++                     android:layout_height="20dp"
++                     android:background="#F44336"
++                     android:layout_marginEnd="8dp" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="Safety"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++         </LinearLayout>
++     </com.google.android.material.card.MaterialCardView>
++ 
+ -</RelativeLayout>
+++</RelativeLayout>
+++>>>>>>> remotes/origin/Aniket_v1
+diff --cc app/src/main/res/layout/fragment_maps.xml
+index 0a9f027,b144a83..0000000
+--- a/app/src/main/res/layout/fragment_maps.xml
++++ b/app/src/main/res/layout/fragment_maps.xml
+@@@ -1,54 -1,150 +1,206 @@@
+  <?xml version="1.0" encoding="utf-8"?>
+++<<<<<<< HEAD
+ +<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ +    xmlns:app="http://schemas.android.com/apk/res-auto"
+ +    android:layout_width="match_parent"
+ +    android:layout_height="match_parent"
+ +    android:orientation="vertical"
+ +    android:background="@color/background">
+ +
+ +    <!-- Map Container Card -->
+ +    <com.google.android.material.card.MaterialCardView
+ +        android:layout_width="match_parent"
+ +        android:layout_height="0dp"
+ +        android:layout_weight="1"
+ +        android:layout_margin="16dp"
+ +        app:cardCornerRadius="20dp"
+ +        app:cardElevation="4dp"
+ +        app:cardBackgroundColor="@color/surface">
+ +
+ +        <fragment
+ +            android:id="@+id/map"
+ +            android:name="com.google.android.gms.maps.SupportMapFragment"
+ +            android:layout_width="match_parent"
+ +            android:layout_height="match_parent" />
+ +
+ +    </com.google.android.material.card.MaterialCardView>
+ +
+ +    <!-- Info Section -->
+ +    <LinearLayout
+ +        android:layout_width="match_parent"
+ +        android:layout_height="wrap_content"
+ +        android:orientation="vertical"
+ +        android:padding="16dp"
+ +        android:paddingBottom="24dp">
+ +
+ +        <TextView
+ +            android:layout_width="wrap_content"
+ +            android:layout_height="wrap_content"
+ +            android:text="Explore Mumbai"
+ +            android:textColor="@color/text_primary"
+ +            android:textSize="20sp"
+ +            android:textStyle="bold"
+ +            android:fontFamily="sans-serif-medium" />
+ +
+ +        <TextView
+ +            android:layout_width="wrap_content"
+ +            android:layout_height="wrap_content"
+ +            android:layout_marginTop="4dp"
+ +            android:text="Discover locations and navigate the city"
+ +            android:textColor="@color/text_secondary"
+ +            android:textSize="14sp" />
+ +
+ +    </LinearLayout>
+ +
+- </LinearLayout>
+++</LinearLayout>
+++=======
++ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
++     xmlns:tools="http://schemas.android.com/tools"
++     android:layout_width="match_parent"
++     android:layout_height="match_parent"
++     tools:context=".MapsFragment">
++ 
++     <!-- Map Fragment -->
++     <fragment
++         android:id="@+id/map"
++         android:name="com.google.android.gms.maps.SupportMapFragment"
++         android:layout_width="match_parent"
++         android:layout_height="match_parent" />
++ 
++     <!-- Loading Progress Bar -->
++     <ProgressBar
++         android:id="@+id/progress_bar"
++         android:layout_width="wrap_content"
++         android:layout_height="wrap_content"
++         android:layout_centerInParent="true"
++         android:visibility="gone"
++         android:indeterminate="true" />
++ 
++     <!-- Legend Card (Optional) -->
++     <androidx.cardview.widget.CardView
++         android:layout_width="wrap_content"
++         android:layout_height="wrap_content"
++         android:layout_alignParentEnd="true"
++         android:layout_alignParentTop="true"
++         android:layout_margin="16dp"
++         android:elevation="4dp"
++         android:padding="8dp">
++ 
++         <LinearLayout
++             android:layout_width="wrap_content"
++             android:layout_height="wrap_content"
++             android:orientation="vertical"
++             android:padding="12dp">
++ 
++             <TextView
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:text="Legend"
++                 android:textStyle="bold"
++                 android:textSize="14sp"
++                 android:layout_marginBottom="8dp" />
++ 
++             <!-- Road -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="16dp"
++                     android:layout_height="16dp"
++                     android:background="#FF9800" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="  Road"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Water -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="16dp"
++                     android:layout_height="16dp"
++                     android:background="#2196F3" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="  Water"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Electricity -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="16dp"
++                     android:layout_height="16dp"
++                     android:background="#FFEB3B" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="  Electricity"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Waste -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical"
++                 android:layout_marginBottom="4dp">
++ 
++                 <View
++                     android:layout_width="16dp"
++                     android:layout_height="16dp"
++                     android:background="#4CAF50" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="  Waste"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++             <!-- Safety -->
++             <LinearLayout
++                 android:layout_width="wrap_content"
++                 android:layout_height="wrap_content"
++                 android:orientation="horizontal"
++                 android:gravity="center_vertical">
++ 
++                 <View
++                     android:layout_width="16dp"
++                     android:layout_height="16dp"
++                     android:background="#F44336" />
++ 
++                 <TextView
++                     android:layout_width="wrap_content"
++                     android:layout_height="wrap_content"
++                     android:text="  Safety"
++                     android:textSize="12sp" />
++             </LinearLayout>
++ 
++         </LinearLayout>
++     </androidx.cardview.widget.CardView>
++ 
+ -</RelativeLayout>
+++</RelativeLayout>
+++>>>>>>> remotes/origin/Aniket_v1
+diff --cc app/src/main/res/values/colors.xml
+index c602788,8e0c6e8..0000000
+--- a/app/src/main/res/values/colors.xml
++++ b/app/src/main/res/values/colors.xml
+@@@ -33,15 -33,6 +33,18 @@@
+      <color name="white">#FFFFFF</color>
+      <color name="black">#000000</color>
+  
+++<<<<<<< HEAD
+ +    <color name="chip_background">#E2E8F0</color>
+ +
+ +    <!-- Category Colors -->
+ +    <color name="category_general">#6B7280</color>
+ +    <color name="category_question">#3B82F6</color>
+ +    <color name="category_discussion">#8B5CF6</color>
+ +    <color name="category_help">#EC4899</color>
+ +    <color name="category_announcement">#F59E0B</color>
+ +
+++=======
+++>>>>>>> remotes/origin/Aniket_v1
+      <!-- Status Colors -->
+      <color name="status_pending">#FF9800</color>
+      <color name="status_in_progress">#2196F3</color>
+diff --cc gradle/libs.versions.toml
+index 660ee0b,bc07ddb..0000000
+--- a/gradle/libs.versions.toml
++++ b/gradle/libs.versions.toml
+@@@ -7,7 -7,7 +7,11 @@@ appcompat = "1.7.1
+  material = "1.13.0"
+  activity = "1.12.2"
+  constraintlayout = "2.2.1"
+++<<<<<<< HEAD
+ +firebaseDatabase = "22.0.1"
+++=======
++ cameraCamera2Pipe = "1.6.0-alpha02"
+++>>>>>>> remotes/origin/Aniket_v1
+  
+  [libraries]
+  junit = { group = "junit", name = "junit", version.ref = "junit" }
+@@@ -17,7 -17,7 +21,11 @@@ appcompat = { group = "androidx.appcomp
+  material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+  activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+  constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+++<<<<<<< HEAD
+ +firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+++=======
++ camera-camera2-pipe = { group = "androidx.camera", name = "camera-camera2-pipe", version.ref = "cameraCamera2Pipe" }
+++>>>>>>> remotes/origin/Aniket_v1
+  
+  [plugins]
+  android-application = { id = "com.android.application", version.ref = "agp" }

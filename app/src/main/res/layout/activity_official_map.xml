@@ -4,33 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapsActivity">
+    android:background="@color/background"
+    tools:context=".OfficialMapActivity">
 
-    <!-- Map Fragment -->
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <!-- Map Container -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/surface">
 
-    <!-- Loading Progress Bar -->
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Loading Indicator -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone"
-        android:indeterminate="true" />
+        android:indeterminateTint="@color/primary" />
 
     <!-- Legend Card -->
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/legendCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="16dp"
+        android:layout_margin="24dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp">
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="@color/surface">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -41,116 +54,93 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category Legend"
+                android:text="Status Legend"
                 android:textStyle="bold"
-                android:textSize="14sp"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Road -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
                 android:layout_marginBottom="4dp">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#FF9800"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/legend_dot_red"
+                    android:layout_marginEnd="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Road"
-                    android:textSize="12sp" />
+                    android:text="Pending"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary" />
             </LinearLayout>
 
-            <!-- Water -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
                 android:layout_marginBottom="4dp">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#00FFFF"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/legend_dot_orange"
+                    android:layout_marginEnd="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Water"
-                    android:textSize="12sp" />
+                    android:text="Acknowledged"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary" />
             </LinearLayout>
 
-            <!-- Electricity -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
                 android:layout_marginBottom="4dp">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#FFEB3B"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/legend_dot_blue"
+                    android:layout_marginEnd="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Electricity"
-                    android:textSize="12sp" />
+                    android:text="Ongoing"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary" />
             </LinearLayout>
 
-            <!-- Waste -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="4dp">
+                android:orientation="horizontal">
 
                 <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#4CAF50"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/legend_dot_green"
+                    android:layout_marginEnd="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Waste"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <!-- Safety -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <View
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#F44336"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Safety"
-                    android:textSize="12sp" />
+                    android:text="Resolved"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary" />
             </LinearLayout>
 
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>

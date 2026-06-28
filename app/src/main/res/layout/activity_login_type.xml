@@ -11,7 +11,6 @@
         android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/admin_login_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -69,7 +68,6 @@
                 android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
-                    android:id="@+id/user_login_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -206,7 +204,6 @@
                 android:foreground="?attr/selectableItemBackground">
 
                 <LinearLayout
-                    android:id="@+id/gov_login_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"

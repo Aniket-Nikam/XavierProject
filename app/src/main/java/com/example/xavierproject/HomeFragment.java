@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -19,7 +19,8 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth;
     private TextView welcomeTextView, subtitleTextView;
     private CircleImageView profileImageView;
-    private MaterialCardView discussionCard;
+    private View mapsContainer;
+    private View complaintBtn;
 
     @Nullable
     @Override
@@ -39,14 +40,45 @@ public class HomeFragment extends Fragment {
         welcomeTextView = view.findViewById(R.id.welcomeTextView);
         subtitleTextView = view.findViewById(R.id.subtitleTextView);
         profileImageView = view.findViewById(R.id.profileImageView);
-        discussionCard = view.findViewById(R.id.discussionCard);
+        mapsContainer = view.findViewById(R.id.maps_container);
+        complaintBtn = view.findViewById(R.id.complaint_btn);
     }
 
     private void setupClickListeners() {
-        discussionCard.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), DiscussionActivity.class);
-            startActivity(intent);
+        mapsContainer.setOnClickListener(v -> showCitySelector("maps"));
+        complaintBtn.setOnClickListener(v -> showCitySelector("complaints"));
+    }
+
+    private void showCitySelector(String actionType) {
+        String[] cities = {"Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad"};
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle("Select City");
+        builder.setItems(cities, (dialog, which) -> {
+            String selectedCity = cities[which];
+            if (selectedCity.equals("Mumbai")) {
+                if (actionType.equals("maps")) {
+                    // Open Maps Activity
+                    Intent intent = new Intent(getActivity(), MapsActivity.class);
+                    intent.putExtra("CITY_NAME", selectedCity);
+                    startActivity(intent);
+                } else if (actionType.equals("complaints")) {
+                    // Open Complaints Activity
+                    Intent intent = new Intent(getActivity(), ComplaintsActivity.class);
+                    intent.putExtra("CITY_NAME", selectedCity);
+                    startActivity(intent);
+                }
+            } else {
+                // Show message that other cities are coming soon
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Coming Soon")
+                        .setMessage(selectedCity + " is currently not available. We're working on it!")
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
         });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 
     private void loadUserData() {
