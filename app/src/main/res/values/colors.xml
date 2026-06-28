@@ -41,4 +41,9 @@
     <color name="category_discussion">#8B5CF6</color>
     <color name="category_help">#EC4899</color>
     <color name="category_announcement">#F59E0B</color>
+
+    <!-- Status Colors -->
+    <color name="status_pending">#FF9800</color>
+    <color name="status_in_progress">#2196F3</color>
+    <color name="status_resolved">#4CAF50</color>
 </resources>
