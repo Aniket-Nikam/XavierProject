@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="?android:attr/colorBackground">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -38,10 +38,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="Welcome to XavierProject"
-                    android:textColor="@android:color/white"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="28sp"
                     android:textStyle="bold"
-                    android:fontFamily="sans-serif-medium"
                     android:textAlignment="center" />
 
                 <TextView
@@ -49,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Select your login type to continue"
-                    android:textColor="#FFFFFFCC"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:textSize="16sp"
                     android:textAlignment="center" />
 

@@ -2,14 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
+        android:id="@+id/splashContentLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:alpha="0.0">
 
         <ImageView
             android:layout_width="120dp"
@@ -22,16 +24,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/app_name"
-            android:textColor="@android:color/white"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="32sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
+            android:textStyle="bold" />
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:indeterminateTint="@android:color/white" />
+            android:layout_marginTop="32dp" />
 
     </LinearLayout>
 

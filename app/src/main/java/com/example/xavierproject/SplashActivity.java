@@ -18,6 +18,17 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         mAuth = FirebaseAuth.getInstance();
+        
+        android.view.View contentLayout = findViewById(R.id.splashContentLayout);
+        if (contentLayout != null) {
+            contentLayout.setTranslationY(50f);
+            contentLayout.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(800)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                    .start();
+        }
 
         new Handler().postDelayed(() -> {
             FirebaseUser currentUser = mAuth.getCurrentUser();
