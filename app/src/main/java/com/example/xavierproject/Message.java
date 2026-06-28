@@ -1,4 +1,4 @@
-﻿package com.example.xavierproject;
+package com.example.xavierproject;
 
 public class Message {
     public static final int TYPE_USER = 0;

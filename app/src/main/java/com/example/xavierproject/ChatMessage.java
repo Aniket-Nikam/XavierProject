@@ -1,4 +1,4 @@
-﻿package com.example.xavierproject;
+package com.example.xavierproject;
 
 public class ChatMessage {
     private String messageId;

@@ -1,4 +1,4 @@
-﻿package com.example.xavierproject;
+package com.example.xavierproject;
 
 import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
